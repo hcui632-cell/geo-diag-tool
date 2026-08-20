@@ -1,0 +1,1266 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GEO实时诊断工具 V2 - 真实AI可见度检测（纯前端版）</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;background:#FFFBEB;color:#333333;min-height:100vh}
+.header{background:linear-gradient(135deg,#FFC300,#FFD54F);border-bottom:1px solid #F0E0C0;padding:20px 32px;position:sticky;top:0;z-index:100}
+.header h1{font-size:22px;font-weight:700;color:#333333}
+.header p{font-size:13px;color:#666666;margin-top:4px}
+.brand-badge{display:inline-block;background:#dc2626;color:#fff;padding:3px 10px;border-radius:6px;font-size:12px;font-weight:600;margin-left:8px}
+.main-container{max-width:1400px;margin:0 auto;padding:24px 32px}
+.apikey-section{background:#FFFFFF;border:1px solid #F0E0C0;border-radius:12px;padding:24px;margin-bottom:20px}
+.apikey-section.collapsed{padding:16px 24px}
+.apikey-header{display:flex;justify-content:space-between;align-items:center;cursor:pointer}
+.apikey-header h2{font-size:16px;font-weight:600;color:#333333;display:flex;align-items:center;gap:8px}
+.apikey-header h2 .icon{width:28px;height:28px;line-height:28px;text-align:center;background:#8b5cf6;color:#fff;border-radius:6px;font-size:14px}
+.apikey-toggle{background:#FFE082;border:none;color:#888888;padding:6px 12px;border-radius:6px;cursor:pointer;font-size:13px}
+.apikey-toggle:hover{background:#FFD54F;color:#333333}
+.apikey-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;margin-top:16px}
+.apikey-card{background:#FFFAF0;border:1px solid #F0E0C0;border-radius:10px;padding:16px;transition:all .2s}
+.apikey-card.disabled{opacity:.5}
+.apikey-card-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.apikey-card-name{font-size:14px;font-weight:600;display:flex;align-items:center;gap:6px}
+.apikey-dot{width:10px;height:10px;border-radius:50%;display:inline-block}
+.apikey-dot.on{background:#22c55e}
+.apikey-dot.off{background:#CCCCCC}
+.toggle-switch{position:relative;width:40px;height:22px;background:#E0D5C0;border-radius:11px;cursor:pointer;transition:background .2s}
+.toggle-switch.on{background:#FFC300}
+.toggle-switch .toggle-knob{position:absolute;top:2px;left:2px;width:18px;height:18px;background:#fff;border-radius:50%;transition:left .2s}
+.toggle-switch.on .toggle-knob{left:20px}
+.apikey-input-wrapper{display:flex;gap:8px}
+.apikey-input{flex:1;background:#FFFAF0;border:1px solid #F0E0C0;border-radius:6px;color:#333333;padding:8px 12px;font-size:13px;font-family:monospace}
+.apikey-input:focus{outline:none;border-color:#FFC300}
+.apikey-test-btn{background:#FFE082;border:1px solid #F0E0C0;color:#888888;padding:6px 12px;border-radius:6px;font-size:12px;cursor:pointer;white-space:nowrap;transition:all .2s}
+.apikey-test-btn:hover{background:#FFD54F;color:#333333}
+.apikey-test-btn.testing{background:#fbbf24;color:#333333;border-color:#fbbf24}
+.apikey-test-btn.valid{background:#22c55e;color:#fff;border-color:#22c55e}
+.apikey-test-btn.invalid{background:#ef4444;color:#fff;border-color:#ef4444}
+.apikey-model{font-size:11px;color:#999999;margin-top:6px}
+.apikey-actions{display:flex;gap:8px;margin-top:12px}
+.apikey-action-btn{font-size:12px;background:#FFE082;border:1px solid #F0E0C0;color:#888888;padding:4px 10px;border-radius:4px;cursor:pointer}
+.apikey-action-btn:hover{background:#FFD54F;color:#333333}
+.input-section{background:#FFFFFF;border:1px solid #F0E0C0;border-radius:12px;padding:24px;margin-bottom:20px}
+.input-section h2{font-size:16px;font-weight:600;color:#333333;margin-bottom:16px;display:flex;align-items:center;gap:8px}
+.input-section h2 .icon{width:28px;height:28px;line-height:28px;text-align:center;background:#FFC300;color:#fff;border-radius:6px;font-size:14px}
+.input-row{display:flex;gap:16px;flex-wrap:wrap;align-items:flex-end}
+.input-group{flex:1;min-width:300px}
+.input-group label{font-size:12px;color:#888888;margin-bottom:6px;display:block}
+.input-group textarea{width:100%;background:#FFFAF0;border:1px solid #F0E0C0;border-radius:8px;color:#333333;padding:12px;font-size:13px;font-family:inherit;resize:vertical;min-height:180px;max-height:400px}
+.input-group textarea:focus{outline:none;border-color:#FFC300}
+.input-group input{width:100%;background:#FFFAF0;border:1px solid #F0E0C0;border-radius:8px;color:#333333;padding:10px 14px;font-size:14px}
+.input-group input:focus{outline:none;border-color:#FFC300}
+.btn-primary{background:#FFC300;color:#fff;border:none;padding:12px 28px;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;transition:all .2s;white-space:nowrap}
+.btn-primary:hover{background:#FFB000}
+.btn-primary:disabled{background:#E0D5C0;color:#AAAAAA;cursor:not-allowed}
+.btn-secondary{background:#FFE082;color:#333333;border:1px solid #F0E0C0;padding:10px 20px;border-radius:8px;font-size:13px;font-weight:500;cursor:pointer;transition:all .2s}
+.btn-secondary:hover{background:#FFD54F}
+.estimate-row{display:flex;gap:12px;align-items:center;margin-top:12px;padding:10px 14px;background:#FFF8E1;border:1px solid #F5EEDD;border-radius:8px;font-size:13px}
+.estimate-label{color:#888888}
+.estimate-value{color:#fbbf24;font-weight:600;font-size:15px}
+.estimate-breakdown{color:#999999;font-size:12px;margin-left:auto}
+.timer-row{display:flex;gap:16px;margin-top:8px;font-size:13px}
+.timer-item{display:flex;gap:4px;align-items:center}
+.timer-label{color:#888888}
+.timer-value{color:#333333;font-weight:600;font-family:monospace}
+.progress-section{background:#FFFFFF;border:1px solid #F0E0C0;border-radius:12px;padding:24px;margin-bottom:20px;display:none}
+.progress-section.active{display:block}
+.progress-section h2{font-size:16px;font-weight:600;color:#333333;margin-bottom:16px;display:flex;align-items:center;gap:8px}
+.progress-section h2 .icon{width:28px;height:28px;line-height:28px;text-align:center;background:#16a34a;color:#fff;border-radius:6px;font-size:14px}
+.platform-progress{display:flex;gap:16px;flex-wrap:wrap;margin-bottom:16px}
+.plat-progress-card{flex:1;min-width:200px;background:#FFF8E1;border:1px solid #F0E0C0;border-radius:10px;padding:16px}
+.plat-progress-card .plat-name{font-size:14px;font-weight:600;margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.plat-dot{width:10px;height:10px;border-radius:50%;display:inline-block}
+.plat-dot.pending{background:#CCCCCC}
+.plat-dot.running{background:#fbbf24;animation:pulse 1.5s infinite}
+.plat-dot.completed{background:#22c55e}
+.plat-dot.error{background:#ef4444}
+.plat-dot.paused{background:#ef4444}
+.plat-dot.waiting_retry{background:#f59e0b;animation:pulse 1.5s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.plat-progress-card .plat-count{font-size:24px;font-weight:700;color:#333333}
+.plat-progress-card .plat-total{font-size:12px;color:#999999}
+.plat-progress-card .plat-status-text{font-size:11px;margin-top:4px}
+.plat-status-text.running{color:#fbbf24}
+.plat-status-text.completed{color:#22c55e}
+.plat-status-text.paused{color:#ef4444}
+.plat-status-text.waiting_retry{color:#f59e0b}
+.plat-progress-bar{height:6px;background:#F0E0C0;border-radius:3px;margin-top:10px;overflow:hidden}
+.plat-progress-bar-fill{height:100%;border-radius:3px;transition:width .5s ease}
+.plat-progress-bar-fill.ds{background:#3b82f6}
+.plat-progress-bar-fill.km{background:#a855f7}
+.plat-progress-bar-fill.wx{background:#eab308}
+.plat-progress-bar-fill.db{background:#34d399}
+.plat-progress-bar-fill.qw{background:#f472b6}
+.live-log{background:#FFF8E1;border:1px solid #F5EEDD;border-radius:8px;padding:12px;max-height:200px;overflow-y:auto;font-family:'SF Mono',Monaco,monospace;font-size:12px;color:#888888}
+.live-log .log-line{padding:3px 0;border-bottom:1px solid #F5EEDD}
+.live-log .log-line .ts{color:#AAAAAA;margin-right:8px}
+.live-log .log-line .plat{font-weight:600}
+.live-log .log-line .plat.ds{color:#60a5fa}
+.live-log .log-line .plat.km{color:#c084fc}
+.live-log .log-line .plat.wx{color:#fbbf24}
+.live-log .log-line .plat.db{color:#34d399}
+.live-log .log-line .plat.qw{color:#f472b6}
+.stats-row{display:flex;gap:16px;flex-wrap:wrap;margin-bottom:20px}
+.stat-card{background:#FFFFFF;border:1px solid #F0E0C0;border-radius:12px;padding:18px 24px;min-width:140px;flex:1}
+.stat-card .label{font-size:12px;color:#888888;margin-bottom:6px}
+.stat-card .value{font-size:28px;font-weight:700;color:#333333}
+.stat-card .sub{font-size:11px;color:#999999;margin-top:4px}
+.stat-card.danger .value{color:#f87171}
+.stat-card.warning .value{color:#fbbf24}
+.stat-card.success .value{color:#22c55e}
+.tab-bar{display:flex;gap:8px;margin-bottom:20px;border-bottom:1px solid #F0E0C0}
+.tab-btn{padding:10px 20px;border-radius:8px 8px 0 0;cursor:pointer;font-size:14px;font-weight:500;border:1px solid transparent;background:#FFFFFF;color:#888888;transition:all .2s}
+.tab-btn:hover{color:#333333;background:#FFF8E1}
+.tab-btn.active{background:#FFC300;color:#fff;border-color:#FFC300}
+.table-container{background:#FFFFFF;border:1px solid #F0E0C0;border-radius:12px;overflow:hidden;margin-bottom:20px;overflow-x:auto}
+.data-table{width:100%;border-collapse:collapse;font-size:13px}
+.data-table thead th{background:#FFF8E1;color:#666666;padding:12px 14px;text-align:left;font-weight:600;font-size:12px;border-bottom:2px solid #F0E0C0;white-space:nowrap}
+.data-table tbody tr{border-bottom:1px solid #F5EEDD;cursor:pointer;transition:background .15s}
+.data-table tbody tr:hover{background:#FFFDE7}
+.data-table td{padding:12px 14px;color:#444444;vertical-align:middle}
+.data-table td.qid{color:#999999;font-family:monospace;font-size:12px;width:60px}
+.data-table td.query{max-width:300px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.plat-badge{display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:6px;font-size:11px;font-weight:600;cursor:pointer;transition:all .2s}
+.plat-badge:hover{transform:scale(1.05)}
+.plat-badge.ds{background:#E3F2FD;color:#1976D2}
+.plat-badge.ds:hover{background:#1976D2;color:#fff}
+.plat-badge.wx{background:#FFF8E1;color:#F57F17}
+.plat-badge.wx:hover{background:#F57F17;color:#fff}
+.plat-badge.km{background:#F3E5F5;color:#7B1FA2}
+.plat-badge.km:hover{background:#7B1FA2;color:#fff}
+.plat-badge.db{background:#E8F5E9;color:#2E7D32}
+.plat-badge.db:hover{background:#2E7D32;color:#fff}
+.plat-badge.qw{background:#FCE4EC;color:#C2185B}
+.plat-badge.qw:hover{background:#C2185B;color:#fff}
+.plat-badge.not-mentioned{opacity:.5}
+.plat-badge.error{background:#FFEBEE;color:#E53935}
+.mention-yes{color:#f87171;font-weight:700;font-size:13px}
+.mention-no{color:#AAAAAA;font-size:13px}
+.rank-text{font-size:11px;color:#888888;margin-top:2px}
+.brand-tags{display:flex;flex-wrap:wrap;gap:4px}
+.brand-tag{display:inline-block;padding:2px 8px;border-radius:4px;font-size:11px;background:#FFF8E1;color:#888888}
+.brand-tag.target{background:#dc2626;color:#fff;font-weight:600}
+.brand-tag.top1{background:#E3F2FD;color:#1976D2}
+.brand-rank-num{display:inline-block;width:18px;height:18px;line-height:18px;text-align:center;border-radius:50%;font-size:10px;font-weight:700;margin-right:4px}
+.brand-rank-num.r1{background:#fbbf24;color:#333333}
+.brand-rank-num.r2{background:#CCCCCC;color:#333333}
+.brand-rank-num.r3{background:#a16207;color:#fff}
+.section-title{font-size:18px;font-weight:700;color:#333333;margin-bottom:16px;display:flex;align-items:center;gap:8px;padding:20px 24px 0}
+.section-title .icon{width:28px;height:28px;line-height:28px;text-align:center;background:#FFC300;color:#fff;border-radius:6px;font-size:14px}
+.modal-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.4);z-index:9999;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .2s}
+.modal-overlay.active{opacity:1;pointer-events:auto}
+.modal{background:#FFFFFF;border:1px solid #F0E0C0;border-radius:16px;width:92%;max-width:860px;max-height:85vh;display:flex;flex-direction:column;box-shadow:0 20px 60px rgba(0,0,0,.15)}
+.modal-header{padding:16px 24px;border-bottom:1px solid #F0E0C0;display:flex;justify-content:space-between;align-items:center;flex-shrink:0}
+.modal-header h3{font-size:15px;color:#333333;font-weight:600}
+.modal-close{width:36px;height:36px;border-radius:8px;border:none;background:#FFE082;cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center;color:#888888;transition:all .2s}
+.modal-close:hover{background:#FFD54F;color:#333333}
+.modal-body{padding:24px;overflow-y:auto;flex:1}
+.ranking-list{display:flex;flex-direction:column;gap:6px}
+.ranking-item{display:flex;align-items:center;gap:12px;padding:10px 14px;border-radius:8px;background:#FFFAF0;border:1px solid #F5EEDD;transition:all .2s}
+.ranking-item:hover{border-color:#F0E0C0}
+.ranking-item.target{background:rgba(220,38,38,.1);border-color:#dc2626}
+.ranking-item .rank-num{width:28px;height:28px;line-height:28px;text-align:center;border-radius:50%;font-size:13px;font-weight:700;flex-shrink:0}
+.ranking-item .rank-num.r1{background:#fbbf24;color:#333333}
+.ranking-item .rank-num.r2{background:#CCCCCC;color:#333333}
+.ranking-item .rank-num.r3{background:#D4A017;color:#fff}
+.ranking-item .rank-num.other{background:#E0D5C0;color:#888888}
+.ranking-item .brand-name{flex:1;font-size:14px;color:#333333}
+.ranking-item.target .brand-name{color:#f87171;font-weight:600}
+.ranking-item .mention-count{font-size:12px;color:#999999;background:#FFF8E1;padding:2px 8px;border-radius:4px}
+.ranking-item .plat-icons{display:flex;gap:4px}
+.plat-icon{width:22px;height:22px;line-height:22px;text-align:center;border-radius:4px;font-size:10px;font-weight:600}
+.plat-icon.ds{background:#E3F2FD;color:#1976D2}
+.plat-icon.wx{background:#FFF8E1;color:#F57F17}
+.plat-icon.km{background:#F3E5F5;color:#7B1FA2}
+.plat-icon.db{background:#E8F5E9;color:#2E7D32}
+.plat-icon.qw{background:#FCE4EC;color:#C2185B}
+.ai-reply-text{font-size:14px;line-height:1.8;color:#444444;white-space:pre-wrap;word-break:break-word}
+.ai-reply-text .hl-target{background:rgba(220,38,38,.12);color:#D32F2F;padding:2px 6px;border-radius:4px;font-weight:600}
+.ai-reply-text .hl-comp{background:rgba(25,118,210,.10);color:#1976D2;padding:1px 4px;border-radius:3px}
+.ai-reply-meta{padding:12px 24px;border-top:1px solid #F0E0C0;font-size:12px;color:#999999;display:flex;justify-content:space-between;flex-shrink:0}
+.error-modal{max-width:520px}
+.error-modal .modal-header{border-bottom:1px solid #EF5350}
+.error-modal .error-icon{font-size:48px;text-align:center;margin-bottom:16px}
+.error-modal .error-type{font-size:18px;font-weight:700;text-align:center;margin-bottom:8px}
+.error-modal .error-type.danger{color:#E53935}
+.error-modal .error-type.warning{color:#fbbf24}
+.error-modal .error-detail{background:#FFF8E1;border:1px solid #F0E0C0;border-radius:8px;padding:12px;margin:12px 0;font-size:13px;color:#888888;text-align:center}
+.error-modal .error-platform{font-size:13px;color:#888888;text-align:center;margin-bottom:16px}
+.error-modal .error-actions{display:flex;gap:12px;justify-content:center}
+.error-modal .error-btn{padding:10px 20px;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;border:none;transition:all .2s}
+.error-btn-primary{background:#FFC300;color:#fff}
+.error-btn-primary:hover{background:#FFB000}
+.error-btn-secondary{background:#FFE082;color:#333333}
+.error-btn-secondary:hover{background:#FFD54F}
+.error-btn-danger{background:#dc2626;color:#fff}
+.error-btn-danger:hover{background:#b91c1c}
+.diagnosis-toast{position:fixed;top:80px;right:24px;background:#FFFFFF;border:1px solid #F0E0C0;border-radius:10px;padding:16px 20px;max-width:420px;box-shadow:0 8px 32px rgba(0,0,0,.15);z-index:9998;transform:translateX(440px);transition:transform .3s ease}
+.diagnosis-toast.show{transform:translateX(0)}
+.diagnosis-toast.warning{border-color:#f59e0b}
+.diagnosis-toast.danger{border-color:#dc2626}
+.diagnosis-toast.info{border-color:#FFC300}
+.diagnosis-toast .toast-title{font-size:14px;font-weight:600;margin-bottom:4px}
+.diagnosis-toast .toast-body{font-size:13px;color:#888888;line-height:1.5}
+.spinner{display:inline-block;width:16px;height:16px;border:2px solid #F0E0C0;border-top-color:#FFC300;border-radius:50%;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+@media(max-width:768px){.main-container{padding:16px}.stats-row{gap:8px}.stat-card{min-width:140px;padding:14px}.platform-progress{flex-direction:column}.input-row{flex-direction:column}.apikey-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="header">
+  <h1>GEO实时诊断工具 V2 <span class="brand-badge" id="header-brand">真实AI可见度</span></h1>
+  <p>支持 DeepSeek / Kimi / 文心一言 / 豆包 / 通义千问 五平台 · API Key本地存储 · 纯前端运行 · 无需部署</p>
+</div>
+
+<div class="main-container">
+  <div class="apikey-section" id="apikey-section">
+    <div class="apikey-header" onclick="toggleApikeyPanel()">
+      <h2><span class="icon">🔑</span>API Key 管理</h2>
+      <button class="apikey-toggle" id="apikey-toggle-btn">收起 ▲</button>
+    </div>
+    <div id="apikey-body">
+      <div class="apikey-grid" id="apikey-grid"></div>
+      <div class="apikey-actions">
+        <button class="apikey-action-btn" onclick="saveApiKeys()">💾 保存到本地</button>
+        <button class="apikey-action-btn" onclick="clearApiKeys()">🗑️ 清除所有Key</button>
+        <button class="apikey-action-btn" onclick="testAllKeys()">🧪 测试所有Key</button>
+      </div>
+      <div style="margin-top:8px;font-size:11px;color:#999999">⚠️ API Key仅存储在浏览器localStorage中，不会上传到任何服务器。所有AI API调用直接从浏览器发起。</div>
+    </div>
+  </div>
+
+  <div class="input-section">
+    <h2><span class="icon">📝</span>诊断配置</h2>
+    <div class="input-row">
+      <div class="input-group" style="flex:2">
+        <label>问题列表（每行一个问题）</label>
+        <textarea id="questions-input" placeholder="上海种植牙医院排名&#10;种植牙医院哪家好&#10;上海种植牙医院多少钱"></textarea>
+      </div>
+      <div class="input-group" style="flex:1;max-width:300px">
+        <label>目标品牌名称</label>
+        <input id="brand-input" type="text" value="宏康" placeholder="如：宏康">
+        <div style="margin-top:12px"><button class="btn-primary" id="start-btn" onclick="startDiagnosis()">🚀 开始诊断</button></div>
+        <div style="margin-top:8px"><button class="btn-secondary" onclick="loadPresetQuestions()">📋 加载预设问题</button></div>
+      </div>
+    </div>
+    <div class="estimate-row" id="estimate-row" style="display:none">
+      <span class="estimate-label">预计完成时间：</span>
+      <span class="estimate-value" id="estimate-value">-</span>
+      <span class="estimate-breakdown" id="estimate-breakdown"></span>
+    </div>
+    <div class="timer-row" id="timer-row" style="display:none">
+      <div class="timer-item"><span class="timer-label">⏱️ 已用：</span><span class="timer-value" id="elapsed-time">00:00</span></div>
+      <div class="timer-item"><span class="timer-label">⏳ 剩余：</span><span class="timer-value" id="remaining-time">--:--</span></div>
+    </div>
+  </div>
+
+  <div class="progress-section" id="progress-section">
+    <h2><span class="icon">⚡</span>实时进度</h2>
+    <div class="platform-progress" id="platform-progress"></div>
+    <div class="live-log" id="live-log"></div>
+  </div>
+
+  <div class="stats-row" id="stats-row" style="display:none">
+    <div class="stat-card danger"><div class="label">目标品牌提及率</div><div class="value" id="stat-mention-rate">0.0%</div><div class="sub" id="stat-mention-sub">0/0次回答中提及</div></div>
+    <div class="stat-card" id="stat-card-ds"><div class="label">DeepSeek提及</div><div class="value" id="stat-ds">0</div><div class="sub" id="stat-ds-sub">/ 0个问题</div></div>
+    <div class="stat-card" id="stat-card-wx"><div class="label">文心一言提及</div><div class="value" id="stat-wx">0</div><div class="sub" id="stat-wx-sub">/ 0个问题</div></div>
+    <div class="stat-card" id="stat-card-km"><div class="label">Kimi提及</div><div class="value" id="stat-km">0</div><div class="sub" id="stat-km-sub">/ 0个问题</div></div>
+    <div class="stat-card" id="stat-card-db" style="display:none"><div class="label">豆包提及</div><div class="value" id="stat-db">0</div><div class="sub" id="stat-db-sub">/ 0个问题</div></div>
+    <div class="stat-card" id="stat-card-qw" style="display:none"><div class="label">通义千问提及</div><div class="value" id="stat-qw">0</div><div class="sub" id="stat-qw-sub">/ 0个问题</div></div>
+    <div class="stat-card warning"><div class="label">问题总数</div><div class="value" id="stat-total">0</div><div class="sub" id="stat-total-sub">× 平台</div></div>
+  </div>
+
+  <div style="margin-bottom:12px;display:none" id="export-row">
+    <button class="btn-secondary" onclick="exportJSON()">📥 导出JSON</button>
+    <button class="btn-secondary" onclick="exportCSV()" style="margin-left:8px">📥 导出CSV</button>
+  </div>
+
+  <div class="tab-bar" id="tab-bar" style="display:none">
+    <div class="tab-btn active" onclick="switchTab('brand-ranking')">📊 品牌排名看板</div>
+    <div class="tab-btn" onclick="switchTab('ai-detection')">🔍 AI诊断检测看板</div>
+  </div>
+
+  <div id="tab-brand-ranking">
+    <div class="section-title"><span class="icon">📊</span>品牌排名看板 — 各问题AI提及医院排序</div>
+    <div class="table-container"><table class="data-table"><thead><tr><th>编号</th><th>问题内容</th><th>AI提及的品牌排名（按频率）</th><th>目标品牌排名</th></tr></thead><tbody id="brand-ranking-tbody"><tr><td colspan="4" style="text-align:center;padding:40px;color:#AAAAAA">开始诊断后查看结果</td></tr></tbody></table></div>
+  </div>
+
+  <div id="tab-ai-detection" style="display:none">
+    <div class="section-title"><span class="icon">🔍</span>AI诊断检测看板 — 各平台目标品牌提及详情</div>
+    <div class="table-container"><table class="data-table"><thead><tr><th>编号</th><th>问题内容</th><th id="th-ds">DeepSeek</th><th id="th-wx">文心一言</th><th id="th-km">Kimi</th><th id="th-db">豆包</th><th id="th-qw">通义千问</th></tr></thead><tbody id="ai-detection-tbody"><tr><td colspan="7" style="text-align:center;padding:40px;color:#AAAAAA">开始诊断后查看结果</td></tr></tbody></table></div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="ranking-modal" onclick="closeModal('ranking-modal')"><div class="modal" onclick="event.stopPropagation()"><div class="modal-header"><div><h3 id="ranking-modal-title">品牌提及排名</h3></div><button class="modal-close" onclick="closeModal('ranking-modal')">✕</button></div><div class="modal-body" id="ranking-modal-body"></div></div></div>
+<div class="modal-overlay" id="reply-modal" onclick="closeModal('reply-modal')"><div class="modal" onclick="event.stopPropagation()"><div class="modal-header"><div><h3 id="reply-modal-title">AI回答原文</h3></div><button class="modal-close" onclick="closeModal('reply-modal')">✕</button></div><div class="modal-body" id="reply-modal-body"></div><div class="ai-reply-meta" id="reply-modal-meta"></div></div></div>
+<div class="modal-overlay" id="error-modal" onclick="closeModal('error-modal')"><div class="modal error-modal" onclick="event.stopPropagation()"><div class="modal-header"><div><h3 style="color:#E53935">⚠️ API调用错误</h3></div><button class="modal-close" onclick="closeModal('error-modal')">✕</button></div><div class="modal-body" id="error-modal-body"></div></div></div>
+<div class="diagnosis-toast" id="diagnosis-toast"><div class="toast-title" id="toast-title"></div><div class="toast-body" id="toast-body"></div></div>
+
+<script>
+// ============================================================
+// GEO 实时诊断工具 V2 - 纯前端版
+// 所有逻辑在浏览器中运行，无需后端服务器
+// ============================================================
+
+// ============ 平台配置 ============
+var PLATFORM_CONFIG = {
+  deepseek: { name: 'DeepSeek', bg: 'ds', sn: 'DS', color: '#60a5fa', model: 'deepseek-chat', url: 'https://api.deepseek.com/v1/chat/completions', perQuestionMs: 6000, rateLimit: 10 },
+  kimi:     { name: 'Kimi',     bg: 'km', sn: 'KM', color: '#c084fc', model: 'moonshot-v1-8k', url: 'https://api.moonshot.cn/v1/chat/completions', perQuestionMs: 20000, rateLimit: 3 },
+  wenxin:   { name: '文心一言',  bg: 'wx', sn: 'WX', color: '#fbbf24', model: 'ernie-4.0-8k-latest', url: 'https://qianfan.baidubce.com/v2/chat/completions', perQuestionMs: 1000, rateLimit: 60 },
+  doubao:   { name: '豆包',     bg: 'db', sn: 'DB', color: '#34d399', model: 'doubao-pro-32k', url: 'https://ark.cn-beijing.volces.com/api/v3/chat/completions', perQuestionMs: 6000, rateLimit: 10 },
+  qwen:     { name: '通义千问',   bg: 'qw', sn: 'QW', color: '#f472b6', model: 'qwen-plus', url: 'https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions', perQuestionMs: 6000, rateLimit: 10 }
+};
+var ALL_PLATFORMS = ['deepseek', 'kimi', 'wenxin', 'doubao', 'qwen'];
+var ERROR_LABELS = {
+  key_invalid: 'API Key无效或已失效',
+  insufficient_balance: '账户余额不足',
+  no_permission: '无权限访问该模型',
+  rate_limited: '触发限速，需要等待',
+  server_error: '服务器内部错误',
+  timeout: '请求超时',
+  network_error: '网络连接错误',
+  unknown: '未知错误'
+};
+
+// ============ 系统 Prompt ============
+var SYSTEM_PROMPT = '你是一位口腔医疗领域的专业助手，对上海地区的口腔医疗机构有深入了解。请根据用户的问题，给出真实存在的口腔医疗机构名称、地址和特色服务。请确保提供的信息准确、具体，包含机构全称。回答要专业、客观。';
+
+// ============ 默认问题列表 ============
+var DEFAULT_QUESTIONS = [
+  '上海种植牙医院排名','正规的种植牙医院排名','附近的种植牙医院去哪','种植牙医院哪家好','种植牙医院收费标准',
+  '种植牙医院哪里好','上海种植牙医院多少钱','种植牙医院大概多少钱','附近种植牙医院在哪','半口种植牙医院哪家好',
+  '口腔种植牙医院排名','上海种植牙医院地址','种植牙医院口碑哪家好','比较好的种植牙医院有哪些','专业的全口种植牙医院',
+  '哪个种植牙医院技术好','哪家种植牙医院比较好','最好的种植牙医院排名','上海种植牙医院地址','种植牙医院哪家便宜'
+];
+var DEFAULT_BRAND = '宏康';
+
+// ============ State ============
+var jobData = null;
+var targetBrand = '宏康';
+var targetKeywords = ['宏康医院', '宏康口腔', '宏康', '上海宏康'];
+var sortedMap = {};
+var jobStartTime = null;
+var estimatedSeconds = 0;
+var timerInterval = null;
+var pendingErrorContext = null;
+var platformPaused = {};  // track paused platforms
+var platformCancelled = {}; // track cancelled platforms
+
+// ============ 品牌关键词提取 ============
+function generateKeywords(b) {
+  if (b.indexOf('宏康') >= 0) return ['宏康医院', '宏康口腔', '宏康', '上海宏康'];
+  var k = [b];
+  var cityMatch = b.match(/^(上海|北京|广州|深圳|杭州|南京|成都|武汉|西安|重庆|苏州|天津)/);
+  if (cityMatch) {
+    var short = b.slice(cityMatch[0].length);
+    if (short.length >= 2) k.push(short);
+  } else {
+    k.push('上海' + b);
+  }
+  if (b.indexOf('医院') < 0 && b.indexOf('口腔') < 0) {
+    k.push(b + '医院');
+    k.push(b + '口腔');
+  }
+  return k;
+}
+
+// ============ 医院名称提取 ============
+function extractHospitals(text) {
+  var hospitals = [];
+  var patterns = [
+    /([一二三四五六七八九十\d]+[、.）)\s]*)?([\u4e00-\u9fa5A-Za-z0-9]{2,15}(?:医院|口腔医院|口腔诊所|口腔门诊部|牙科诊所|口腔中心|齿科|牙科|门诊部))/g,
+    /([\u4e00-\u9fa5A-Za-z0-9]{2,15}(?:医院|口腔医院|口腔诊所|口腔门诊部|牙科诊所|口腔中心|齿科|牙科|门诊部))/g
+  ];
+  var seen = {};
+  for (var pi = 0; pi < patterns.length; pi++) {
+    var pattern = patterns[pi];
+    var match;
+    while ((match = pattern.exec(text)) !== null) {
+      var name = match[match.length - 1].trim();
+      if (!seen[name] && name.length >= 4) {
+        seen[name] = true;
+        hospitals.push(name);
+      }
+    }
+  }
+  return hospitals;
+}
+
+function checkBrandMentioned(text, keywords) {
+  for (var i = 0; i < keywords.length; i++) {
+    if (text.indexOf(keywords[i]) >= 0) return true;
+  }
+  return false;
+}
+
+function findBrandRank(hospitals, keywords) {
+  for (var i = 0; i < hospitals.length; i++) {
+    for (var j = 0; j < keywords.length; j++) {
+      if (hospitals[i].indexOf(keywords[j]) >= 0) return i + 1;
+    }
+  }
+  return null;
+}
+
+// ============ 错误分类 ============
+function classifyError(statusCode, errorMessage) {
+  if (statusCode === 401) return { type: 'key_invalid', label: 'API Key无效或已失效', action: 'change_key' };
+  if (statusCode === 402) return { type: 'insufficient_balance', label: '账户余额不足', action: 'change_key' };
+  if (statusCode === 403) return { type: 'no_permission', label: '无权限访问该模型', action: 'change_key' };
+  if (statusCode === 429) return { type: 'rate_limited', label: '触发限速，需要等待', action: 'retry_wait' };
+  if (statusCode >= 500) return { type: 'server_error', label: '服务器内部错误', action: 'retry' };
+  if (errorMessage && errorMessage.indexOf('timeout') >= 0) return { type: 'timeout', label: '请求超时', action: 'retry' };
+  if (errorMessage && (errorMessage.indexOf('fetch') >= 0 || errorMessage.indexOf('NetworkError') >= 0 || errorMessage.indexOf('Failed to fetch') >= 0)) return { type: 'network_error', label: '网络连接错误', action: 'retry' };
+  return { type: 'unknown', label: '未知错误', action: 'skip' };
+}
+
+// ============ AI API 调用（浏览器直接调用）============
+async function callAI(platform, question, apiKey) {
+  var config = PLATFORM_CONFIG[platform];
+  var url = config.url;
+  var headers = { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + apiKey };
+  var body;
+
+  if (platform === 'wenxin') {
+    // 文心一言：系统prompt放在user消息里
+    body = {
+      model: config.model,
+      messages: [{ role: 'user', content: SYSTEM_PROMPT + '\n\n用户问题：' + question }],
+      temperature: 0.7,
+      max_tokens: 2000,
+      stream: false
+    };
+  } else if (platform === 'kimi') {
+    // Kimi：temperature=1, max_tokens=4000
+    body = {
+      model: config.model,
+      messages: [
+        { role: 'system', content: SYSTEM_PROMPT },
+        { role: 'user', content: question }
+      ],
+      temperature: 1,
+      max_tokens: 4000,
+      stream: false
+    };
+  } else {
+    // DeepSeek, 豆包, 通义千问：标准格式
+    body = {
+      model: config.model,
+      messages: [
+        { role: 'system', content: SYSTEM_PROMPT },
+        { role: 'user', content: question }
+      ],
+      temperature: 0.7,
+      max_tokens: 2000,
+      stream: false
+    };
+  }
+
+  // 使用 AbortController 实现超时
+  var controller = new AbortController();
+  var timeoutId = setTimeout(function() { controller.abort(); }, 60000);
+
+  try {
+    var resp = await fetch(url, {
+      method: 'POST',
+      headers: headers,
+      body: JSON.stringify(body),
+      signal: controller.signal
+    });
+    clearTimeout(timeoutId);
+
+    if (!resp.ok) {
+      var errText = await resp.text();
+      var err = new Error(config.name + ' API error ' + resp.status + ': ' + errText.substring(0, 500));
+      err.statusCode = resp.status;
+      err.platform = platform;
+      throw err;
+    }
+
+    var data = await resp.json();
+    var content = data.choices[0].message.content;
+    if (!content && data.choices[0].message.reasoning_content) {
+      content = data.choices[0].message.reasoning_content;
+    }
+    return content || '(空回答)';
+  } catch (err) {
+    clearTimeout(timeoutId);
+    if (err.name === 'AbortError') {
+      var timeoutErr = new Error(config.name + ' API timeout');
+      timeoutErr.platform = platform;
+      throw timeoutErr;
+    }
+    throw err;
+  }
+}
+
+// ============ API Key 测试 ============
+async function testKey(p) {
+  var key = document.getElementById('key-input-' + p).value.trim();
+  if (!key) { alert('请先输入API Key'); return; }
+  var btn = document.getElementById('test-btn-' + p);
+  btn.className = 'apikey-test-btn testing';
+  btn.textContent = '测试中...';
+  try {
+    var config = PLATFORM_CONFIG[p];
+    var headers = { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + key };
+    var body;
+    if (p === 'wenxin') {
+      body = { model: config.model, messages: [{ role: 'user', content: '你好' }], max_tokens: 10, stream: false };
+    } else {
+      body = { model: config.model, messages: [{ role: 'user', content: '你好' }], max_tokens: 10, stream: false };
+    }
+    var controller = new AbortController();
+    var timeoutId = setTimeout(function() { controller.abort(); }, 15000);
+    var resp = await fetch(config.url, { method: 'POST', headers: headers, body: JSON.stringify(body), signal: controller.signal });
+    clearTimeout(timeoutId);
+    if (resp.ok) {
+      btn.className = 'apikey-test-btn valid';
+      btn.textContent = '✓ 有效';
+    } else {
+      var errText = await resp.text();
+      var errClass = classifyError(resp.status, errText);
+      btn.className = 'apikey-test-btn invalid';
+      btn.textContent = '✗ ' + errClass.label;
+    }
+  } catch (err) {
+    btn.className = 'apikey-test-btn invalid';
+    var errMsg = err.message || '';
+    if (errMsg.indexOf('fetch') >= 0 || errMsg.indexOf('NetworkError') >= 0 || errMsg.indexOf('Failed to fetch') >= 0) {
+      btn.textContent = '✗ 网络错误';
+    } else if (errMsg.indexOf('timeout') >= 0 || err.name === 'AbortError') {
+      btn.textContent = '✗ 请求超时';
+    } else {
+      btn.textContent = '✗ ' + errMsg.substring(0, 50);
+    }
+  }
+  setTimeout(function() { btn.className = 'apikey-test-btn'; btn.textContent = '测试'; }, 5000);
+}
+
+async function testAllKeys() {
+  for (var i = 0; i < ALL_PLATFORMS.length; i++) {
+    var p = ALL_PLATFORMS[i];
+    var key = document.getElementById('key-input-' + p).value.trim();
+    if (key) { await testKey(p); }
+  }
+}
+
+// ============ API Key 管理 ============
+function getStoredKeys() {
+  try { var s = localStorage.getItem('geo_api_keys'); return s ? JSON.parse(s) : {}; } catch(e) { return {}; }
+}
+function getPlatformStates() {
+  try { var s = localStorage.getItem('geo_platform_states'); return s ? JSON.parse(s) : {}; } catch(e) { return {}; }
+}
+
+function renderApikeyPanel() {
+  var keys = getStoredKeys();
+  var states = getPlatformStates();
+  var grid = document.getElementById('apikey-grid');
+  grid.innerHTML = '';
+  ALL_PLATFORMS.forEach(function(p) {
+    var config = PLATFORM_CONFIG[p];
+    var enabled = states[p] !== false;
+    var key = keys[p] || '';
+    var card = document.createElement('div');
+    card.className = 'apikey-card' + (enabled ? '' : ' disabled');
+    var modelLine = '模型: ' + config.model;
+    if (p === 'wenxin') modelLine += '<br><span style="color:#f59e0b">⚠ 文心需填入access_token（通过API Key+Secret Key在千帆平台换取）</span>';
+    else if (p === 'doubao') modelLine += '<br><span style="color:#888">⚠ 如有专属endpoint ID请替换模型名</span>';
+    card.innerHTML =
+      '<div class="apikey-card-header">' +
+        '<div class="apikey-card-name"><span class="apikey-dot ' + (enabled ? 'on' : 'off') + '" id="key-dot-' + p + '"></span>' + config.name + '</div>' +
+        '<div class="toggle-switch ' + (enabled ? 'on' : '') + '" id="toggle-' + p + '" onclick="togglePlatform(\'' + p + '\')"><div class="toggle-knob"></div></div>' +
+      '</div>' +
+      '<div class="apikey-input-wrapper">' +
+        '<input type="password" class="apikey-input" id="key-input-' + p + '" placeholder="输入' + config.name + ' API Key" value="' + escapeHtml(key) + '" oninput="onKeyInput(\'' + p + '\')">' +
+        '<button class="apikey-test-btn" id="test-btn-' + p + '" onclick="testKey(\'' + p + '\')">测试</button>' +
+      '</div>' +
+      '<div class="apikey-model">' + modelLine + '</div>';
+    grid.appendChild(card);
+  });
+}
+
+function togglePlatform(p) {
+  var states = getPlatformStates();
+  states[p] = states[p] === false ? true : false;
+  localStorage.setItem('geo_platform_states', JSON.stringify(states));
+  renderApikeyPanel();
+  updateEstimate();
+}
+
+function onKeyInput(p) {
+  var keys = getStoredKeys();
+  var val = document.getElementById('key-input-' + p).value;
+  if (val) { keys[p] = val; } else { delete keys[p]; }
+  localStorage.setItem('geo_api_keys', JSON.stringify(keys));
+}
+
+function saveApiKeys() {
+  var keys = {};
+  ALL_PLATFORMS.forEach(function(p) { var v = document.getElementById('key-input-' + p).value; if (v) keys[p] = v; });
+  localStorage.setItem('geo_api_keys', JSON.stringify(keys));
+  showToast('info', '已保存', 'API Key已保存到浏览器本地存储');
+}
+
+function clearApiKeys() {
+  if (!confirm('确定清除所有API Key吗？')) return;
+  localStorage.removeItem('geo_api_keys');
+  renderApikeyPanel();
+  showToast('info', '已清除', '所有API Key已从本地存储中清除');
+}
+
+function toggleApikeyPanel() {
+  var section = document.getElementById('apikey-section');
+  var body = document.getElementById('apikey-body');
+  var btn = document.getElementById('apikey-toggle-btn');
+  if (section.classList.contains('collapsed')) {
+    section.classList.remove('collapsed');
+    body.style.display = 'block';
+    btn.innerHTML = '收起 ▲';
+  } else {
+    section.classList.add('collapsed');
+    body.style.display = 'none';
+    btn.innerHTML = '展开 ▼';
+  }
+}
+
+function getEnabledPlatformConfigs() {
+  var keys = getStoredKeys();
+  var states = getPlatformStates();
+  return ALL_PLATFORMS.filter(function(p) {
+    return states[p] !== false && keys[p] && keys[p].trim() !== '';
+  }).map(function(p) {
+    return { platform: p, apiKey: keys[p], enabled: true };
+  });
+}
+
+// ============ 预估时间 ============
+function updateEstimate() {
+  var text = document.getElementById('questions-input').value.trim();
+  var qs = text.split('\n').map(function(s) { return s.trim(); }).filter(function(s) { return s.length > 0; });
+  var configs = getEnabledPlatformConfigs();
+  if (qs.length === 0 || configs.length === 0) {
+    document.getElementById('estimate-row').style.display = 'none';
+    return;
+  }
+  var maxMs = 0;
+  var slowestPlatform = null;
+  configs.forEach(function(pc) {
+    var platConfig = PLATFORM_CONFIG[pc.platform];
+    if (platConfig && platConfig.perQuestionMs > maxMs) {
+      maxMs = platConfig.perQuestionMs;
+      slowestPlatform = pc.platform;
+    }
+  });
+  var totalSeconds = Math.ceil(maxMs * qs.length / 1000);
+  var minutes = Math.floor(totalSeconds / 60);
+  var seconds = totalSeconds % 60;
+  var text2 = minutes > 0 ? '约' + minutes + '分' + seconds + '秒' : '约' + seconds + '秒';
+  document.getElementById('estimate-row').style.display = 'flex';
+  document.getElementById('estimate-value').textContent = text2;
+  var breakdown = configs.map(function(pc) {
+    var pc2 = PLATFORM_CONFIG[pc.platform];
+    return pc2.name + ': ' + (pc2.perQuestionMs * qs.length / 1000).toFixed(0) + 's';
+  }).join(' | ');
+  document.getElementById('estimate-breakdown').textContent = '最慢平台: ' + (PLATFORM_CONFIG[slowestPlatform] ? PLATFORM_CONFIG[slowestPlatform].name : '-') + ' | ' + breakdown;
+  estimatedSeconds = totalSeconds;
+}
+
+// ============ 计时器 ============
+function startTimer() {
+  jobStartTime = Date.now();
+  if (timerInterval) clearInterval(timerInterval);
+  timerInterval = setInterval(updateTimer, 1000);
+  document.getElementById('timer-row').style.display = 'flex';
+}
+function stopTimer() { if (timerInterval) { clearInterval(timerInterval); timerInterval = null; } }
+function updateTimer() {
+  if (!jobStartTime) return;
+  var elapsed = Math.floor((Date.now() - jobStartTime) / 1000);
+  var remaining = Math.max(0, estimatedSeconds - elapsed);
+  document.getElementById('elapsed-time').textContent = formatTime(elapsed);
+  document.getElementById('remaining-time').textContent = remaining > 0 ? formatTime(remaining) : '即将完成';
+}
+function formatTime(s) {
+  var m = Math.floor(s / 60);
+  var sec = s % 60;
+  return String(m).padStart(2, '0') + ':' + String(sec).padStart(2, '0');
+}
+
+// ============ 诊断主流程 ============
+async function startDiagnosis() {
+  var text = document.getElementById('questions-input').value.trim();
+  var brand = document.getElementById('brand-input').value.trim() || '宏康';
+  if (!text) { alert('请输入至少一个问题'); return; }
+  var qs = text.split('\n').map(function(s) { return s.trim(); }).filter(function(s) { return s.length > 0; });
+  if (qs.length === 0) { alert('请输入至少一个问题'); return; }
+  var configs = getEnabledPlatformConfigs();
+  if (configs.length === 0) { alert('请至少启用一个平台并输入API Key'); toggleApikeyPanelExpand(); return; }
+  for (var i = 0; i < configs.length; i++) {
+    if (!configs[i].apiKey || configs[i].apiKey.trim() === '') {
+      alert('请为 ' + PLATFORM_CONFIG[configs[i].platform].name + ' 输入API Key');
+      toggleApikeyPanelExpand();
+      return;
+    }
+  }
+
+  targetBrand = brand;
+  targetKeywords = generateKeywords(brand);
+  var btn = document.getElementById('start-btn');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span> 诊断中...';
+  document.getElementById('progress-section').classList.add('active');
+  document.getElementById('stats-row').style.display = 'none';
+  document.getElementById('tab-bar').style.display = 'none';
+  document.getElementById('export-row').style.display = 'none';
+
+  // 初始化 jobData
+  var enabledPlatforms = configs.map(function(c) { return c.platform; });
+  jobData = {
+    jobId: 'local_' + Date.now().toString(36),
+    questions: qs.map(function(q, i) { return { id: 'Q' + String(i + 1).padStart(2, '0'), query: q }; }),
+    targetBrand: brand,
+    targetKeywords: targetKeywords,
+    enabledPlatforms: enabledPlatforms,
+    results: {},
+    progress: {},
+    createdAt: Date.now()
+  };
+  jobData.questions.forEach(function(q) {
+    jobData.results[q.id] = {};
+    enabledPlatforms.forEach(function(p) { jobData.results[q.id][p] = null; });
+  });
+  enabledPlatforms.forEach(function(p) {
+    jobData.progress[p] = { total: qs.length, done: 0, status: 'pending' };
+    platformPaused[p] = false;
+    platformCancelled[p] = false;
+  });
+
+  initProgressUI(qs.length, enabledPlatforms);
+  startTimer();
+  addLog('system', '诊断任务已启动，共 ' + qs.length + ' 个问题 × ' + enabledPlatforms.length + ' 个平台');
+
+  // 并发运行所有平台
+  var promises = enabledPlatforms.map(function(platform) {
+    return runPlatform(platform, configs.find(function(c) { return c.platform === platform; }).apiKey, qs);
+  });
+  await Promise.allSettled(promises);
+
+  stopTimer();
+  addLog('system', '🎉 全部诊断完成！');
+  renderResults();
+  btn.disabled = false;
+  btn.innerHTML = '🚀 开始诊断';
+}
+
+function toggleApikeyPanelExpand() {
+  var section = document.getElementById('apikey-section');
+  if (section.classList.contains('collapsed')) { toggleApikeyPanel(); }
+}
+
+function initProgressUI(total, configs) {
+  var c = document.getElementById('platform-progress');
+  c.innerHTML = '';
+  configs.forEach(function(pc) {
+    var p = pc.platform || pc;
+    var i = PLATFORM_CONFIG[p];
+    var card = document.createElement('div');
+    card.className = 'plat-progress-card';
+    card.innerHTML = '<div class="plat-name"><span class="plat-dot pending" id="dot-' + p + '"></span>' + i.name + '</div>' +
+      '<div class="plat-count"><span id="done-' + p + '">0</span> / <span class="plat-total">' + total + '</span></div>' +
+      '<div class="plat-status-text pending" id="status-text-' + p + '">等待中</div>' +
+      '<div class="plat-progress-bar"><div class="plat-progress-bar-fill ' + i.bg + '" id="bar-' + p + '" style="width:0%"></div></div>';
+    c.appendChild(card);
+  });
+  document.getElementById('live-log').innerHTML = '';
+}
+
+// ============ 单平台运行（含速率限制）============
+async function runPlatform(platform, apiKey, questions) {
+  var config = PLATFORM_CONFIG[platform];
+  var perQuestionMs = config.perQuestionMs;
+
+  updatePlatformStatus(platform, 'running');
+  addLog(platform, config.name + ' 开始诊断');
+
+  for (var i = 0; i < questions.length; i++) {
+    if (platformCancelled[platform]) {
+      addLog(platform, '平台已取消，跳过剩余问题');
+      break;
+    }
+    if (platformPaused[platform]) {
+      addLog(platform, '平台已暂停（API Key问题），跳过剩余问题');
+      // Mark remaining as skipped
+      for (var j = i; j < questions.length; j++) {
+        var qid = jobData.questions[j].id;
+        jobData.results[qid][platform] = {
+          question_id: qid, platform: platform, question: questions[j],
+          full_reply: '[已跳过] 平台已暂停', target_store_mentioned: false,
+          target_store_rank: null, competitors_mentioned: [], all_mentioned_hospitals: [],
+          error: 'Platform paused', timestamp: Date.now()
+        };
+        jobData.progress[platform].done++;
+      }
+      updatePlatformProgress(platform, jobData.progress[platform]);
+      break;
+    }
+
+    var qid = jobData.questions[i].id;
+    var question = questions[i];
+
+    // Rate limit: wait between questions
+    if (i > 0) {
+      addLog(platform, '[' + qid + '] 速率限制等待 ' + (perQuestionMs / 1000) + 's...');
+      await sleep(perQuestionMs);
+    }
+
+    if (platformPaused[platform] || platformCancelled[platform]) continue;
+
+    addLog(platform, '[' + qid + '] 正在查询: ' + question.substring(0, 30) + '...');
+
+    var reply = null;
+    var networkRetries = 0;
+    var maxNetworkRetries = 3;
+    var success = false;
+
+    while (networkRetries < maxNetworkRetries && !success) {
+      try {
+        reply = await callAI(platform, question, apiKey);
+        success = true;
+      } catch (err) {
+        var errClass = classifyError(err.statusCode, err.message);
+        if (errClass.action === 'retry' && networkRetries < maxNetworkRetries - 1) {
+          networkRetries++;
+          addLog(platform, '[' + qid + '] 重试中(' + networkRetries + '/' + maxNetworkRetries + '): ' + errClass.label + ', 等待5s');
+          await sleep(5000);
+        } else if (errClass.action === 'retry_wait') {
+          addLog(platform, '[' + qid + '] 触发限速，等待60s后重试...');
+          showToast('warning', config.name + ' 限速', '触发限速 (429)，等待60秒后自动重试');
+          updatePlatformStatus(platform, 'waiting_retry');
+          await sleep(60000);
+          updatePlatformStatus(platform, 'running');
+          try {
+            reply = await callAI(platform, question, apiKey);
+            success = true;
+          } catch (err2) {
+            // Final failure
+            networkRetries = maxNetworkRetries;
+          }
+        } else if (errClass.action === 'change_key') {
+          // Pause platform
+          platformPaused[platform] = true;
+          updatePlatformStatus(platform, 'paused');
+          showErrorModal(platform, qid, errClass.type, err.statusCode, err.message);
+          addLog(platform, '❌ ' + errClass.label + ' (HTTP ' + err.statusCode + ')');
+          // Record error result
+          jobData.results[qid][platform] = {
+            question_id: qid, platform: platform, question: question,
+            full_reply: '[API Error] ' + err.message, target_store_mentioned: false,
+            target_store_rank: null, competitors_mentioned: [], all_mentioned_hospitals: [],
+            error: err.message, errorType: errClass.type, statusCode: err.statusCode, timestamp: Date.now()
+          };
+          jobData.progress[platform].done++;
+          updatePlatformProgress(platform, jobData.progress[platform]);
+          break;
+        } else {
+          // Unknown / skip
+          networkRetries = maxNetworkRetries;
+        }
+      }
+    }
+
+    if (!success && !platformPaused[platform]) {
+      // Record error
+      var errMsg = reply ? '(max retries) ' + reply : 'Max retries exceeded';
+      jobData.results[qid][platform] = {
+        question_id: qid, platform: platform, question: question,
+        full_reply: '[API Error] ' + errMsg, target_store_mentioned: false,
+        target_store_rank: null, competitors_mentioned: [], all_mentioned_hospitals: [],
+        error: errMsg, errorType: 'unknown', timestamp: Date.now()
+      };
+      jobData.progress[platform].done++;
+      updatePlatformProgress(platform, jobData.progress[platform]);
+      addLog(platform, '[' + qid + '] ❌ 错误: ' + errMsg.substring(0, 80));
+      continue;
+    }
+
+    if (success && reply) {
+      // Analyze
+      var hospitals = extractHospitals(reply);
+      var targetMentioned = checkBrandMentioned(reply, targetKeywords);
+      var targetRank = targetMentioned ? findBrandRank(hospitals, targetKeywords) : null;
+      var competitors = hospitals.filter(function(h) {
+        return !targetKeywords.some(function(kw) { return h.indexOf(kw) >= 0; });
+      });
+
+      var result = {
+        question_id: qid, platform: platform, question: question,
+        full_reply: reply, target_store_mentioned: targetMentioned,
+        target_store_rank: targetRank, competitors_mentioned: competitors,
+        all_mentioned_hospitals: hospitals, timestamp: Date.now()
+      };
+      jobData.results[qid][platform] = result;
+      jobData.progress[platform].done++;
+      updatePlatformProgress(platform, jobData.progress[platform]);
+
+      var status = targetMentioned ? '✅ 提及 (排名' + (targetRank || '-') + ')' : '❌ 未提及';
+      addLog(platform, '[' + qid + '] ' + status);
+    }
+  }
+
+  if (!platformPaused[platform] && !platformCancelled[platform]) {
+    updatePlatformStatus(platform, 'completed');
+    addLog(platform, config.name + ' 诊断完成');
+  }
+}
+
+function sleep(ms) { return new Promise(function(resolve) { setTimeout(resolve, ms); }); }
+
+// ============ 进度更新 ============
+function updatePlatformStatus(p, s) {
+  var d = document.getElementById('dot-' + p);
+  if (d) d.className = 'plat-dot ' + s;
+  var st = document.getElementById('status-text-' + p);
+  if (st) {
+    st.className = 'plat-status-text ' + s;
+    var labels = { pending: '等待中', running: '运行中', completed: '✅ 已完成', paused: '🔴 已暂停', waiting_retry: '🟡 等待重试', error: '❌ 错误' };
+    st.textContent = labels[s] || s;
+  }
+  if (jobData && jobData.progress[p]) jobData.progress[p].status = s;
+}
+
+function updatePlatformProgress(p, pr) {
+  var d = document.getElementById('done-' + p);
+  var b = document.getElementById('bar-' + p);
+  if (d) d.textContent = pr.done;
+  if (b) b.style.width = (pr.done / pr.total * 100) + '%';
+  if (pr.status === 'completed') updatePlatformStatus(p, 'completed');
+}
+
+function addLog(p, m) {
+  var log = document.getElementById('live-log');
+  var l = document.createElement('div');
+  l.className = 'log-line';
+  var ts = new Date().toLocaleTimeString('zh-CN', { hour12: false });
+  var pn = p === 'system' ? 'SYSTEM' : (PLATFORM_CONFIG[p] ? PLATFORM_CONFIG[p].sn : p.toUpperCase());
+  var pc = p === 'system' ? '' : (PLATFORM_CONFIG[p] ? PLATFORM_CONFIG[p].bg : '');
+  l.innerHTML = '<span class="ts">' + ts + '</span><span class="plat ' + pc + '">[' + pn + ']</span> ' + escapeHtml(m);
+  log.appendChild(l);
+  log.scrollTop = log.scrollHeight;
+}
+
+// ============ Error Modal ============
+function showErrorModal(platform, questionId, errorType, statusCode, errorMessage) {
+  var label = ERROR_LABELS[errorType] || '未知错误';
+  var isErrorModal = errorType === 'key_invalid' || errorType === 'insufficient_balance' || errorType === 'no_permission';
+  var isWarning = errorType === 'rate_limited' || errorType === 'timeout' || errorType === 'network_error';
+  var icon = isErrorModal ? '🔑' : (isWarning ? '⏳' : '⚠️');
+  var typeClass = isErrorModal ? 'danger' : (isWarning ? 'warning' : 'danger');
+  var platName = PLATFORM_CONFIG[platform] ? PLATFORM_CONFIG[platform].name : platform;
+  var detail = 'HTTP ' + (statusCode || 'N/A') + ' · ' + (errorMessage || '').substring(0, 200);
+  var actions = '';
+  if (isErrorModal) {
+    actions = '<button class="error-btn error-btn-primary" onclick="scrollToApikey()">更换API Key</button><button class="error-btn error-btn-secondary" onclick="closeModal(\'error-modal\')">知道了</button>';
+  } else if (errorType === 'rate_limited') {
+    actions = '<button class="error-btn error-btn-secondary" onclick="closeModal(\'error-modal\')">等待自动重试</button>';
+  } else {
+    actions = '<button class="error-btn error-btn-secondary" onclick="closeModal(\'error-modal\')">知道了</button>';
+  }
+  document.getElementById('error-modal-body').innerHTML =
+    '<div class="error-icon">' + icon + '</div>' +
+    '<div class="error-type ' + typeClass + '">' + label + '</div>' +
+    '<div class="error-detail">' + escapeHtml(detail) + '</div>' +
+    '<div class="error-platform">平台: ' + platName + ' · 问题: ' + questionId + '</div>' +
+    '<div class="error-actions">' + actions + '</div>';
+  pendingErrorContext = { platform: platform, questionId: questionId, errorType: errorType };
+  document.getElementById('error-modal').classList.add('active');
+}
+
+function scrollToApikey() {
+  closeModal('error-modal');
+  var section = document.getElementById('apikey-section');
+  if (section.classList.contains('collapsed')) toggleApikeyPanel();
+  section.scrollIntoView({ behavior: 'smooth' });
+}
+
+// ============ Toast ============
+var toastTimeout = null;
+function showToast(type, title, body) {
+  var toast = document.getElementById('diagnosis-toast');
+  toast.className = 'diagnosis-toast ' + type + ' show';
+  document.getElementById('toast-title').textContent = title;
+  document.getElementById('toast-body').textContent = body;
+  if (toastTimeout) clearTimeout(toastTimeout);
+  toastTimeout = setTimeout(function() { toast.classList.remove('show'); }, 8000);
+}
+
+// ============ 结果渲染 ============
+function renderResults() {
+  if (!jobData) return;
+  document.getElementById('stats-row').style.display = 'flex';
+  document.getElementById('tab-bar').style.display = 'flex';
+  document.getElementById('export-row').style.display = 'block';
+  var enabledPlats = jobData.enabledPlatforms || ['deepseek', 'wenxin', 'kimi'];
+  ['db', 'qw', 'ds', 'wx', 'km'].forEach(function(suffix) {
+    var plat = suffix === 'ds' ? 'deepseek' : (suffix === 'wx' ? 'wenxin' : (suffix === 'km' ? 'kimi' : (suffix === 'db' ? 'doubao' : 'qwen')));
+    var card = document.getElementById('stat-card-' + suffix);
+    if (card) card.style.display = enabledPlats.indexOf(plat) >= 0 ? 'block' : 'none';
+  });
+  document.getElementById('stat-total-sub').textContent = '× ' + enabledPlats.length + '平台 = ' + (jobData.questions.length * enabledPlats.length) + '条回答';
+  ['ds', 'wx', 'km', 'db', 'qw'].forEach(function(suffix) {
+    var plat = suffix === 'ds' ? 'deepseek' : (suffix === 'wx' ? 'wenxin' : (suffix === 'km' ? 'kimi' : (suffix === 'db' ? 'doubao' : 'qwen')));
+    var th = document.getElementById('th-' + suffix);
+    if (th) th.style.display = enabledPlats.indexOf(plat) >= 0 ? 'table-cell' : 'none';
+  });
+  renderStats();
+  renderBrandRanking();
+  renderAIDetection();
+}
+
+function renderStats() {
+  var qs = jobData.questions;
+  var enabledPlats = jobData.enabledPlatforms || ['deepseek', 'wenxin', 'kimi'];
+  var total = qs.length;
+  var counts = { deepseek: 0, wenxin: 0, kimi: 0, doubao: 0, qwen: 0 };
+  var ta = 0, tm = 0;
+  qs.forEach(function(q) {
+    enabledPlats.forEach(function(p) {
+      var r = jobData.results[q.id] && jobData.results[q.id][p];
+      if (r && !r.error) {
+        ta++;
+        if (r.target_store_mentioned) { tm++; counts[p]++; }
+      }
+    });
+  });
+  var rate = ta > 0 ? (tm / ta * 100).toFixed(1) : '0.0';
+  document.getElementById('stat-mention-rate').textContent = rate + '%';
+  document.getElementById('stat-mention-sub').textContent = tm + '/' + ta + '次回答中提及';
+  var suffixMap = { deepseek: 'ds', wenxin: 'wx', kimi: 'km', doubao: 'db', qwen: 'qw' };
+  enabledPlats.forEach(function(p) {
+    var suffix = suffixMap[p];
+    if (suffix) {
+      var el = document.getElementById('stat-' + suffix);
+      var sub = document.getElementById('stat-' + suffix + '-sub');
+      if (el) el.textContent = counts[p];
+      if (sub) sub.textContent = '/ ' + total + '个问题';
+    }
+  });
+  document.getElementById('stat-total').textContent = total;
+}
+
+function renderBrandRanking() {
+  var tb = document.getElementById('brand-ranking-tbody');
+  tb.innerHTML = '';
+  sortedMap = {};
+  var enabledPlats = jobData.enabledPlatforms || ['deepseek', 'wenxin', 'kimi'];
+  jobData.questions.forEach(function(q) {
+    var hm = {};
+    enabledPlats.forEach(function(p) {
+      var r = jobData.results[q.id] && jobData.results[q.id][p];
+      if (!r || r.error) return;
+      (r.all_mentioned_hospitals || []).forEach(function(h, i) {
+        if (!hm[h]) hm[h] = { count: 0, platforms: {}, ranks: [] };
+        hm[h].count++;
+        hm[h].platforms[p] = true;
+        hm[h].ranks.push(i + 1);
+      });
+    });
+    var sorted = Object.keys(hm).map(function(k) { return [k, hm[k]]; }).sort(function(a, b) {
+      if (b[1].count !== a[1].count) return b[1].count - a[1].count;
+      var aA = a[1].ranks.reduce(function(s, n) { return s + n; }, 0) / a[1].ranks.length;
+      var aB = b[1].ranks.reduce(function(s, n) { return s + n; }, 0) / b[1].ranks.length;
+      return aA - aB;
+    });
+    sortedMap[q.id] = sorted;
+    var tr = null;
+    for (var i = 0; i < sorted.length; i++) {
+      var isTarget = targetKeywords.some(function(kw) { return sorted[i][0].indexOf(kw) >= 0; });
+      if (isTarget) { tr = i + 1; break; }
+    }
+    var top5 = sorted.slice(0, 5);
+    var tags = top5.map(function(e, idx) {
+      var n = e[0], info = e[1];
+      var isT = targetKeywords.some(function(kw) { return n.indexOf(kw) >= 0; });
+      var cls = isT ? 'target' : (idx === 0 ? 'top1' : '');
+      var rc = idx === 0 ? 'r1' : (idx === 1 ? 'r2' : (idx === 2 ? 'r3' : ''));
+      var picons = Object.keys(info.platforms).map(function(p) {
+        return '<span class="plat-icon ' + PLATFORM_CONFIG[p].bg + '">' + PLATFORM_CONFIG[p].sn + '</span>';
+      }).join('');
+      return '<span class="brand-tag ' + cls + '"><span class="brand-rank-num ' + rc + '">' + (idx + 1) + '</span>' + escapeHtml(n) + ' (' + info.count + ')' + picons + '</span>';
+    }).join('');
+    var trHtml = tr ? '<span class="mention-yes">#' + tr + '</span>' : '<span class="mention-no">未上榜</span>';
+    var row = document.createElement('tr');
+    row.setAttribute('data-qid', q.id);
+    row.onclick = function() {
+      var qid = this.getAttribute('data-qid');
+      var q2 = jobData.questions.find(function(x) { return x.id === qid; });
+      showRankingModal(q2, sortedMap[qid] || []);
+    };
+    row.innerHTML = '<td class="qid">' + q.id + '</td><td class="query">' + escapeHtml(q.query) + '</td><td><div class="brand-tags">' + (tags || '<span style="color:#AAAAAA">无数据</span>') + '</div></td><td>' + trHtml + '</td>';
+    tb.appendChild(row);
+  });
+}
+
+function showRankingModal(q, sorted) {
+  document.getElementById('ranking-modal-title').textContent = q.id + ' - ' + q.query;
+  var body = document.getElementById('ranking-modal-body');
+  if (!sorted || sorted.length === 0) {
+    body.innerHTML = '<p style="color:#999999;text-align:center;padding:20px">无AI提及的医院数据</p>';
+    document.getElementById('ranking-modal').classList.add('active');
+    return;
+  }
+  var html = sorted.map(function(e, idx) {
+    var n = e[0], info = e[1];
+    var isT = targetKeywords.some(function(kw) { return n.indexOf(kw) >= 0; });
+    var rc = idx === 0 ? 'r1' : (idx === 1 ? 'r2' : (idx === 2 ? 'r3' : 'other'));
+    var picons = Object.keys(info.platforms).map(function(p) {
+      return '<span class="plat-icon ' + PLATFORM_CONFIG[p].bg + '">' + PLATFORM_CONFIG[p].sn + '</span>';
+    }).join('');
+    return '<div class="ranking-item' + (isT ? ' target' : '') + '"><div class="rank-num ' + rc + '">' + (idx + 1) + '</div><div class="brand-name">' + escapeHtml(n) + '</div><div class="mention-count">提及' + info.count + '次</div><div class="plat-icons">' + picons + '</div></div>';
+  }).join('');
+  body.innerHTML = '<div class="ranking-list">' + html + '</div>';
+  document.getElementById('ranking-modal').classList.add('active');
+}
+
+function renderAIDetection() {
+  var tb = document.getElementById('ai-detection-tbody');
+  tb.innerHTML = '';
+  var enabledPlats = jobData.enabledPlatforms || ['deepseek', 'wenxin', 'kimi'];
+  jobData.questions.forEach(function(q) {
+    var cells = {};
+    enabledPlats.forEach(function(p) {
+      var r = jobData.results[q.id] && jobData.results[q.id][p];
+      var i = PLATFORM_CONFIG[p];
+      var html = '';
+      if (!r) {
+        html = '<span class="plat-badge ' + i.bg + ' not-mentioned">未运行</span>';
+      } else if (r.error) {
+        html = '<span class="plat-badge error" onclick="showReplyModal(\'' + q.id + '\',\'' + p + '\')">错误</span>';
+      } else if (r.target_store_mentioned) {
+        var top3 = (r.all_mentioned_hospitals || []).slice(0, 3).join('、');
+        html = '<span class="plat-badge ' + i.bg + '" onclick="showReplyModal(\'' + q.id + '\',\'' + p + '\')">✅ 提及 #' + r.target_store_rank + '</span><div class="rank-text">' + escapeHtml(top3) + '</div>';
+      } else {
+        html = '<span class="plat-badge ' + i.bg + ' not-mentioned" onclick="showReplyModal(\'' + q.id + '\',\'' + p + '\')">❌ 未提及</span>';
+      }
+      cells[p] = html;
+    });
+    var cellHtml = enabledPlats.map(function(p) { return '<td style="display:table-cell">' + (cells[p] || '') + '</td>'; }).join('');
+    var row = document.createElement('tr');
+    row.innerHTML = '<td class="qid">' + q.id + '</td><td class="query">' + escapeHtml(q.query) + '</td>' + cellHtml;
+    tb.appendChild(row);
+  });
+}
+
+function showReplyModal(qid, plat) {
+  var r = jobData.results[qid] && jobData.results[qid][plat];
+  if (!r) return;
+  var q = jobData.questions.find(function(x) { return x.id === qid; });
+  document.getElementById('reply-modal-title').textContent = PLATFORM_CONFIG[plat].name + ' - ' + qid + ' ' + q.query;
+  var text = escapeHtml(r.full_reply || '(无回答)');
+  targetKeywords.forEach(function(kw) {
+    var escapedKw = escapeHtml(kw);
+    text = text.split(escapedKw).join('<span class="hl-target">' + escapedKw + '</span>');
+  });
+  if (r.all_mentioned_hospitals) {
+    r.all_mentioned_hospitals.slice(0, 5).forEach(function(h) {
+      if (!targetKeywords.some(function(kw) { return h.indexOf(kw) >= 0; })) {
+        var escapedH = escapeHtml(h);
+        text = text.split(escapedH).join('<span class="hl-comp">' + escapedH + '</span>');
+      }
+    });
+  }
+  document.getElementById('reply-modal-body').innerHTML = '<div class="ai-reply-text">' + text + '</div>';
+  document.getElementById('reply-modal-meta').innerHTML = '<span>平台: ' + PLATFORM_CONFIG[plat].name + '</span><span>提及: ' + (r.target_store_mentioned ? '是' : '否') + (r.target_store_rank ? ' (排名#' + r.target_store_rank + ')' : '') + '</span>';
+  document.getElementById('reply-modal').classList.add('active');
+}
+
+// ============ 工具函数 ============
+function escapeHtml(s) {
+  if (!s) return '';
+  var d = document.createElement('div');
+  d.textContent = s;
+  return d.innerHTML;
+}
+
+function loadPresetQuestions() {
+  document.getElementById('questions-input').value = DEFAULT_QUESTIONS.join('\n');
+  document.getElementById('brand-input').value = DEFAULT_BRAND;
+  updateEstimate();
+}
+
+function switchTab(t) {
+  var btns = document.querySelectorAll('.tab-btn');
+  btns.forEach(function(b) { b.classList.remove('active'); });
+  if (t === 'brand-ranking') {
+    btns[0].classList.add('active');
+    document.getElementById('tab-brand-ranking').style.display = 'block';
+    document.getElementById('tab-ai-detection').style.display = 'none';
+  } else {
+    btns[1].classList.add('active');
+    document.getElementById('tab-brand-ranking').style.display = 'none';
+    document.getElementById('tab-ai-detection').style.display = 'block';
+  }
+}
+
+// ============ 导出 ============
+function exportJSON() {
+  if (!jobData) { alert('没有可导出的数据'); return; }
+  var blob = new Blob([JSON.stringify(jobData, null, 2)], { type: 'application/json' });
+  var url = URL.createObjectURL(blob);
+  var a = document.createElement('a');
+  a.href = url;
+  a.download = 'geo_diagnosis_' + (jobData.jobId || 'result') + '_' + new Date().toISOString().slice(0, 10) + '.json';
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function exportCSV() {
+  if (!jobData) { alert('没有可导出的数据'); return; }
+  var enabledPlats = jobData.enabledPlatforms || ['deepseek', 'wenxin', 'kimi'];
+  var rows = [['问题编号', '问题内容']];
+  enabledPlats.forEach(function(p) {
+    rows[0].push(PLATFORM_CONFIG[p].name + '_提及');
+    rows[0].push(PLATFORM_CONFIG[p].name + '_排名');
+    rows[0].push(PLATFORM_CONFIG[p].name + '_错误');
+  });
+  jobData.questions.forEach(function(q) {
+    var row = [q.id, q.query];
+    enabledPlats.forEach(function(p) {
+      var r = jobData.results[q.id] && jobData.results[q.id][p];
+      if (r && !r.error) {
+        row.push(r.target_store_mentioned ? '是' : '否');
+        row.push(r.target_store_rank || '');
+        row.push('');
+      } else if (r && r.error) {
+        row.push('', '', r.error);
+      } else {
+        row.push('', '', '未运行');
+      }
+    });
+    rows.push(row);
+  });
+  var csv = rows.map(function(r) { return r.map(function(c) { return '"' + String(c).replace(/"/g, '""') + '"'; }).join(','); }).join('\n');
+  var blob = new Blob(['\ufeff' + csv], { type: 'text/csv;charset=utf-8' });
+  var url = URL.createObjectURL(blob);
+  var a = document.createElement('a');
+  a.href = url;
+  a.download = 'geo_diagnosis_' + (jobData.jobId || 'result') + '_' + new Date().toISOString().slice(0, 10) + '.csv';
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function closeModal(id) { document.getElementById(id).classList.remove('active'); }
+
+// ============ 初始化 ============
+renderApikeyPanel();
+document.getElementById('questions-input').addEventListener('input', updateEstimate);
+loadPresetQuestions();
+</script>
+</body>
+</html>
