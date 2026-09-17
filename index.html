@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>GEO实时诊断工具 V2 - 真实AI可见度检测（纯前端版）</title>
+<title>GEO实时诊断工具 V2.1 - 真实AI可见度检测（纯前端版）</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
@@ -213,7 +213,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;b
 </head>
 <body>
 <div class="header">
-  <h1>GEO实时诊断工具 V2 <span class="brand-badge" id="header-brand">真实AI可见度</span></h1>
+  <h1>GEO实时诊断工具 V2.1 <span class="brand-badge" id="header-brand">真实AI可见度</span></h1>
   <p>支持 DeepSeek / Kimi / 文心一言 / 豆包 / 通义千问 五平台 · API Key本地存储 · 纯前端运行 · 无需部署</p>
 </div>
 
@@ -230,7 +230,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;b
         <button class="apikey-action-btn" onclick="clearApiKeys()">🗑️ 清除所有Key</button>
         <button class="apikey-action-btn" onclick="testAllKeys()">🧪 测试所有Key</button>
       </div>
-      <div style="margin-top:8px;font-size:11px;color:#999999">⚠️ API Key仅存储在浏览器localStorage中，不会上传到任何服务器。所有AI API调用直接从浏览器发起。</div>
+      <div style="margin-top:8px;font-size:11px;color:#999999">⚠️ 部分平台已内置 API Key（轻度混淆存储，仍可被懂技术的人查看源码获取）。请勿将本页面链接公开分享或外发；API Key 亦可存储在浏览器 localStorage 中，不会上传到任何服务器。</div>
     </div>
   </div>
 
@@ -242,7 +242,13 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;b
         <textarea id="questions-input" placeholder="上海种植牙医院排名&#10;种植牙医院哪家好&#10;上海种植牙医院多少钱"></textarea>
       </div>
       <div class="input-group" style="flex:1;max-width:300px">
-        <label>目标品牌名称</label>
+        <label>预设客户（一键载入问题集与品牌关键词）</label>
+        <select id="client-select" onchange="loadClient(this.value)" style="width:100%;padding:8px 10px;border:1px solid #F0E0C0;border-radius:6px;background:#FFFAF0;font-size:13px;color:#333">
+          <option value="custom">自定义（手动输入）</option>
+          <option value="hongkang" selected>上海宏康医院（宏康口腔）· 50题</option>
+          <option value="yalai">雅莱齿科（杭州）· 50题</option>
+        </select>
+        <label style="margin-top:10px">目标品牌名称</label>
         <input id="brand-input" type="text" value="宏康" placeholder="如：宏康">
         <div style="margin-top:12px"><button class="btn-primary" id="start-btn" onclick="startDiagnosis()">🚀 开始诊断</button></div>
         <div style="margin-top:8px"><button class="btn-secondary" onclick="loadPresetQuestions()">📋 加载预设问题</button></div>
@@ -310,12 +316,33 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;b
 // ============ 平台配置 ============
 var PLATFORM_CONFIG = {
   deepseek: { name: 'DeepSeek', bg: 'ds', sn: 'DS', color: '#60a5fa', model: 'deepseek-chat', url: 'https://api.deepseek.com/v1/chat/completions', perQuestionMs: 6000, rateLimit: 10 },
-  kimi:     { name: 'Kimi',     bg: 'km', sn: 'KM', color: '#c084fc', model: 'moonshot-v1-8k', url: 'https://api.moonshot.cn/v1/chat/completions', perQuestionMs: 20000, rateLimit: 3 },
+  kimi:     { name: 'Kimi',     bg: 'km', sn: 'KM', color: '#c084fc', model: 'kimi-k2.6', url: 'https://api.moonshot.cn/v1/chat/completions', perQuestionMs: 20000, rateLimit: 3 },
   wenxin:   { name: '文心一言',  bg: 'wx', sn: 'WX', color: '#fbbf24', model: 'ernie-4.0-8k-latest', url: 'https://qianfan.baidubce.com/v2/chat/completions', perQuestionMs: 1000, rateLimit: 60 },
   doubao:   { name: '豆包',     bg: 'db', sn: 'DB', color: '#34d399', model: 'doubao-pro-32k', url: 'https://ark.cn-beijing.volces.com/api/v3/chat/completions', perQuestionMs: 6000, rateLimit: 10 },
   qwen:     { name: '通义千问',   bg: 'qw', sn: 'QW', color: '#f472b6', model: 'qwen-plus', url: 'https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions', perQuestionMs: 6000, rateLimit: 10 }
 };
 var ALL_PLATFORMS = ['deepseek', 'kimi', 'wenxin', 'doubao', 'qwen'];
+
+// ============ 内置 API Key（轻度混淆存储，页面加载时自动预填）============
+// 注意：静态页面无法真正保密 Key，请仅小范围分享本页面链接；余额敏感时可随时在下方清除。
+var PRESET_KEYS_OBF = {
+  deepseek: '',  // 2026-09 实测已失效，需重新申请后手动填入
+  kimi: 'KTF3LykfCA4PbAAQLGwoHTQ8HBMLFgwTGRMbLSs9MDEDMjsXbxccaWw7IipiMxc2DzMN',
+  wenxin: 'ODk/dyxpdRsWDhsRdzY4ID8YIGMQF20rAxQpLz0PCm0IO3VsPD9iOGlubDtpOz84b2M7a2tobmo7Ym0/P21qbWxvamNpO287Pzht',
+  doubao: '',
+  qwen: ''
+};
+function deobfuscateKey(s) {
+  if (!s) return '';
+  try {
+    var raw = atob(s);
+    // 简单异或还原（仅防爬虫抓取，不防人工查看源码）
+    var out = '';
+    for (var i = 0; i < raw.length; i++) out += String.fromCharCode(raw.charCodeAt(i) ^ 0x5A);
+    return out;
+  } catch (e) { return ''; }
+}
+function getPresetKey(p) { return deobfuscateKey(PRESET_KEYS_OBF[p]); }
 var ERROR_LABELS = {
   key_invalid: 'API Key无效或已失效',
   insufficient_balance: '账户余额不足',
@@ -329,6 +356,124 @@ var ERROR_LABELS = {
 
 // ============ 系统 Prompt ============
 var SYSTEM_PROMPT = '你是一位口腔医疗领域的专业助手，对上海地区的口腔医疗机构有深入了解。请根据用户的问题，给出真实存在的口腔医疗机构名称、地址和特色服务。请确保提供的信息准确、具体，包含机构全称。回答要专业、客观。';
+
+// ============ 预设客户（品牌 + 50题标准问题集）============
+var PRESET_CLIENTS = {
+  hongkang: {
+    label: '上海宏康医院（宏康口腔）· 上海普陀',
+    brand: '宏康',
+    keywords: ['宏康医院', '宏康口腔', '上海宏康医院', '上海宏康', '宏康'],
+    questions: [
+    '上海普陀区有哪些口碑好的口腔医院？',
+    '普陀区种植牙去哪家医院比较靠谱？',
+    '上海普陀区哪里做牙齿矫正好？成人正畸想找个专业的',
+    '普陀区有没有能做全麻拔智齿的医院？',
+    '上海普陀区带小孩看牙去哪好？孩子怕疼想找个耐心的',
+    '普陀区补牙和做根管治疗哪家医院性价比高？',
+    '上海普陀区民营口腔医院哪家规模比较大？',
+    '普陀区中山北路附近有什么好的牙科？',
+    '上海普陀区牙周炎治疗去哪个医院好？牙龈老是出血',
+    '普陀区有没有能做全口种植的医院？父母牙掉了好几颗',
+    '上海普陀区做烤瓷牙套去哪家好？想换个好点的材料',
+    '普陀区半夜牙疼去哪看急诊？有口腔急诊的医院吗？',
+    '上海普陀区有没有口腔医院擅长做牙齿贴面的？想改善门牙不好看',
+    '普陀区哪家医院能治颞下颌关节紊乱？张嘴有弹响',
+    '上海普陀区有做牙齿松动固定的医院吗？不想直接拔掉',
+    '普陀区孕妇可以看牙的医院有哪些？怀孕牙疼不敢随便去',
+    '在普陀区做种植牙，去综合医院的口腔科好还是去专门的口腔诊所好？',
+    '上海普陀区种植牙价格大概多少？哪家医院比较实惠？',
+    '普陀区做隐形牙套和钢丝牙套矫正分别哪家好？两种差价大吗？',
+    '上海普陀区口腔医院的医生资质怎么看？哪几家的医生团队比较强？',
+    '普陀区种植牙用进口还是国产的好？哪家医院品牌选择多？',
+    '想在普陀区做牙齿美白，冷光美白和瓷贴面选哪个？哪家做得好？',
+    '上海普陀区哪家口腔医院设备比较先进？有数字化种植的吗？',
+    '普陀区老年人镶牙去哪好？活动假牙和固定种植该怎么选？',
+    '上海普陀区看牙可以走医保的医院有哪些？种植牙能不能报销？',
+    '普陀区周边几家连锁口腔和本地口腔医院比，去哪种更好？',
+    '上海普陀区有糖尿病能做种植牙的医院吗？听说有的诊所不敢接',
+    '普陀区做牙齿矫正，哪家医院能看到矫正前后模拟效果？',
+    '上海普陀区种植牙各家医院都用什么品牌？瑞士和韩国的差价多少？',
+    '普陀区有没有做种植牙可以分期付款的口腔医院？',
+    '上海普陀区口腔医院的消毒流程靠谱吗？怎么判断一家诊所卫生达标？',
+    '普陀区高血压老人拔牙去哪安全？需要心电监护的那种',
+    '上海普陀区哪家口腔医院有独立诊室？不想在开放区看牙',
+    '普陀区做全瓷冠和烤瓷冠价格差多少？哪家医院的修复科比较好？',
+    '上海普陀区哪个口腔医院的收费标准比较透明？怕中途加价',
+    '普陀区做正畸的话选连锁品牌统一标准好，还是选本地老口腔医院经验丰富好？',
+    '上海普陀区口腔医院排名，口碑最好的是哪几家？',
+    '普陀区种植牙做得最好的医院推荐一下，患者评价高的有哪些？',
+    '上海普陀区正畸效果好的口腔医院有哪些？想找矫正案例多的',
+    '普陀区老年人做种植牙去哪家医院最放心？要安全有保障的',
+    '上海普陀区口腔医院哪家服务态度最好？医生比较耐心的',
+    '普陀区哪家口腔医院做烤瓷牙和全瓷冠口碑好？想找手艺精的',
+    '上海普陀区看牙收费比较实在的医院有哪些？不想被宰',
+    '普陀区有没有开了十年以上的老牌口腔医院？经验丰富的推荐几家',
+    '上海普陀区口腔医院哪家医生团队最强？有没有知名专家坐诊的？',
+    '普陀区做种植牙质保最长的是哪家医院？想找售后靠谱的',
+    '上海普陀区民营口腔医院里口碑最好的是哪家？不想踩雷',
+    '普陀区哪家口腔医院技术设备最先进？有没有用到最新数字化技术的？',
+    '上海普陀区哪家综合医院的口腔科比较强？综合医院看牙有什么优势？',
+    '普陀区规模最大的口腔医疗机构是哪家？大机构是不是更让人放心？'
+    ]
+  },
+  yalai: {
+    label: '雅莱齿科 · 杭州',
+    brand: '雅莱',
+    keywords: ['雅莱齿科', '雅莱口腔', '雅莱', 'YALAI'],
+    questions: [
+    '杭州上城区东站附近有什么好的口腔诊所？',
+    '萧山区奥体附近看牙去哪里比较好？',
+    '杭州滨江区有哪些靠谱的牙科诊所推荐？',
+    '拱墅区城北万达附近有没有好的口腔医院？',
+    '杭州上城区想做种植牙，附近有推荐的诊所吗？',
+    '萧山区做牙齿矫正去哪家好？想做隐形矫正',
+    '杭州滨江区哪家诊所补牙和根管治疗做得比较好？',
+    '拱墅区哪里有比较好的儿童牙科？孩子要做窝沟封闭',
+    '杭州上城区拔智齿去哪个诊所好？怕疼想找个技术好的',
+    '杭州滨江区洗牙哪家诊所服务好？想顺便做个全面检查',
+    '萧山区哪家口腔诊所能做牙周系统治疗？牙龈反复发炎很久了',
+    '杭州拱墅区有做牙齿贴面的口腔诊所吗？门牙缝隙想遮一下',
+    '杭州上城区有什么口腔诊所可以中午看牙的？上班请假不方便',
+    '滨江区有专门做牙齿美白的诊所吗？想做个冷光美白',
+    '萧山区哪家口腔诊所擅长做烤瓷牙？之前做的旧牙套变色了',
+    '杭州拱墅区哪个牙科能治小孩夜磨牙？磨得咯吱响',
+    '杭州上城区几家口腔诊所对比，种植牙价格差距大吗？',
+    '萧山区做种植牙选进口的还是国产的？哪家诊所可选品牌多？',
+    '滨江区做正畸，传统钢丝托槽和隐形矫正价格分别多少？哪家更专业？',
+    '拱墅区口腔诊所的医生哪家比较厉害？怎么判断医生水平？',
+    '杭州上城区想做全瓷牙冠，哪家诊所技术好、材料正规？',
+    '萧山区民营口腔诊所和公立医院口腔科比，哪个性价比更高？',
+    '杭州滨江区几家口腔诊所的设备和环境怎么样？有数字化口扫的吗？',
+    '拱墅区做种植牙哪家诊所质保时间长？售后有保障吗？',
+    '杭州上城区有适合老人镶牙的口腔诊所吗？能做全口种植吗？',
+    '萧山区哪家口腔诊所做儿童早期矫正比较好？几岁开始合适？',
+    '杭州滨江区种植牙用即刻种植技术的诊所有哪些？效果怎么样？',
+    '拱墅区看牙想找个不用排队很久的，民营诊所哪家服务体验好？',
+    '杭州上城区做牙齿矫正，哪家诊所能看到矫正模拟效果再决定？',
+    '萧山区种植牙价格哪家诊所比较透明？怕做完了才知道总价',
+    '杭州滨江区带孩子第一次看牙应该去哪？哪家诊所对小孩比较有耐心？',
+    '拱墅区口腔诊所做牙周治疗的费用高吗？和公立医院比哪个划算？',
+    '杭州上城区做种植牙可以分期付的诊所有吗？一次拿不出那么多钱',
+    '萧山区口腔诊所做牙龈美学修复的有哪些？笑起来露牙龈想改善',
+    '杭州滨江区哪家口腔诊所收费公示做得好？各项目价格都标出来的',
+    '拱墅区做隐形矫正哪家诊所案例多？想看看别人做完的效果',
+    '杭州上城区口腔诊所排名，口碑最好的推荐几家',
+    '萧山区种植牙做得最好的诊所是哪家？想找患者评价高的',
+    '杭州滨江区口碑好的口腔连锁品牌有哪些？哪家评价最高？',
+    '拱墅区做种植牙质保最长的诊所是哪家？想找售后靠谱的',
+    '杭州民营口腔诊所哪家口碑最好？本地人都推荐去哪家？',
+    '杭州上城区哪家口腔诊所医生团队最强？有知名专家的推荐一下',
+    '萧山区开了很多年的老牌口腔诊所有哪些？经验丰富的推荐几家',
+    '杭州滨江区规模最大的口腔诊所是哪家？设备最好的呢？',
+    '拱墅区口腔诊所哪家服务态度好？带老人小孩看牙想找个耐心的',
+    '杭州口腔连锁品牌排名前几的是哪些？各有什么特点？',
+    '杭州做种植牙最好的民营口腔机构有哪几家？',
+    '杭州有哪些开了很多分店的口腔连锁？连锁的是不是比单店更靠谱？',
+    '杭州口腔诊所哪家做正畸最出名？想找矫正案例多的品牌',
+    '杭州主城区各区都有门店的口腔连锁有哪些？方便就近看'
+    ]
+  }
+};
 
 // ============ 默认问题列表 ============
 var DEFAULT_QUESTIONS = [
@@ -352,7 +497,18 @@ var platformPaused = {};  // track paused platforms
 var platformCancelled = {}; // track cancelled platforms
 
 // ============ 品牌关键词提取 ============
+function getClientKeywords(brand) {
+  for (var cid in PRESET_CLIENTS) {
+    var c = PRESET_CLIENTS[cid];
+    if (brand === c.brand || c.keywords.some(function(k) { return brand.indexOf(k) >= 0 || k.indexOf(brand) >= 0; })) {
+      return c.keywords;
+    }
+  }
+  return null;
+}
 function generateKeywords(b) {
+  var preset = getClientKeywords(b);
+  if (preset) return preset;
   if (b.indexOf('宏康') >= 0) return ['宏康医院', '宏康口腔', '宏康', '上海宏康'];
   var k = [b];
   var cityMatch = b.match(/^(上海|北京|广州|深圳|杭州|南京|成都|武汉|西安|重庆|苏州|天津)/);
@@ -369,26 +525,108 @@ function generateKeywords(b) {
   return k;
 }
 
-// ============ 医院名称提取 ============
+// ============ 医院名称提取 V2（实体过滤 + 别名归一 + 按出现顺序）============
+// 常见机构别名 → 规范全称（用于合并"九院/上海九院/第九人民医院"等写法）
+var HOSPITAL_ALIAS = {
+  '九院': '上海交通大学医学院附属第九人民医院',
+  '上海九院': '上海交通大学医学院附属第九人民医院',
+  '上海第九人民医院': '上海交通大学医学院附属第九人民医院',
+  '上海市第九人民医院': '上海交通大学医学院附属第九人民医院',
+  '第九人民医院': '上海交通大学医学院附属第九人民医院',
+  '牙防所': '上海市普陀区眼病牙病防治所',
+  '普陀牙防所': '上海市普陀区眼病牙病防治所',
+  '普陀区牙防所': '上海市普陀区眼病牙病防治所',
+  '普陀区眼病牙病防治所': '上海市普陀区眼病牙病防治所',
+  '同济口腔': '同济大学附属口腔医院',
+  '宏康': '上海宏康医院',
+  '宏康医院': '上海宏康医院',
+  '宏康口腔': '上海宏康医院',
+  '上海宏康': '上海宏康医院',
+  '上海宏康医院': '上海宏康医院',
+  '雅莱': '雅莱齿科',
+  '雅莱口腔': '雅莱齿科',
+  '雅莱齿科': '雅莱齿科'
+};
+var HOSPITAL_SUFFIX = '(?:医院|口腔医院|口腔诊所|口腔门诊部|牙科诊所|口腔中心|口腔|齿科|牙科|门诊部|口腔门诊|诊所|防治所)';
+// 无专属名称的泛称（如"三甲医院""公立医院""综合医院""口腔医院"）一律不算机构
+var GENERIC_HOSPITAL_RE = new RegExp('^(公立|民营|三甲|三级|二级|一级|专科|综合|儿童|中医|地区|区属|市属|定点|医保|附近|周边|本地|该区|全区|全市|国内|国际|大型|老牌|连锁|正规|口碑好|口碑|不错|口腔|牙科|口腔科){0,5}' + HOSPITAL_SUFFIX + '$');
+// 描述性短语特征：包含这些字眼的"医院/口腔/牙科"串几乎都是描述或句子片段而非机构名
+var HOSPITAL_REJECT_SUBSTR = ['的', '是', '医保', '定点', '适合', '提供', '设有', '分部', '护理', '擅长', '技术', '服务', '项目', '治疗', '雄厚', '实力', '优势', '环境', '设备', '团队', '评价', '口碑', '患者', '价格', '费用', '收费', '预约', '介绍', '地址', '电话', '位于', '拥有', '配备', '一家', '某', '哪家', '哪里', '哪几', '怎么', '什么', '吗', '可以', '需要', '建议', '如果', '比如', '例如', '最早', '最好', '知名', '靠谱', '便宜', '排名', '推荐', '领先', '率先', '据悉', '据说', '这里', '该院', '我院', '本院', '这家', '那家', '每家', '以及', '或者', '并且', '但是', '因为', '所以', '此外', '另外', '同时', '首先', '其次', '最后', '总之', '来说', '而言', '方面', '大家'];
+var HOSPITAL_REJECT_PREFIX = ['国内', '全市', '全区', '附近', '周边', '本地', '一家', '某', '各', '这家', '那家', '该院', '我院', '本院', '所谓', '一家', '在'];
+
+function isValidHospitalName(name) {
+  if (!name || name.length < 4 || name.length > 20) return false;
+  if (/[0-9]/.test(name)) return false;
+  if (GENERIC_HOSPITAL_RE.test(name)) return false;
+  for (var i = 0; i < HOSPITAL_REJECT_SUBSTR.length; i++) {
+    if (name.indexOf(HOSPITAL_REJECT_SUBSTR[i]) >= 0) return false;
+  }
+  for (var j = 0; j < HOSPITAL_REJECT_PREFIX.length; j++) {
+    if (name.indexOf(HOSPITAL_REJECT_PREFIX[j]) === 0) return false;
+  }
+  return true;
+}
+
+function canonicalHospital(name) {
+  // "宏康医院口腔(科)" 归一为 "宏康医院"
+  var norm = name.replace(/医院口腔(科)?$/, '医院');
+  if (HOSPITAL_ALIAS[norm]) return HOSPITAL_ALIAS[norm];
+  if (HOSPITAL_ALIAS[name]) return HOSPITAL_ALIAS[name];
+  var stripped = norm.replace(/^上海市?/, '');
+  if (HOSPITAL_ALIAS[stripped]) return HOSPITAL_ALIAS[stripped];
+  return null;
+}
+
 function extractHospitals(text) {
-  var hospitals = [];
-  var patterns = [
-    /([一二三四五六七八九十\d]+[、.）)\s]*)?([\u4e00-\u9fa5A-Za-z0-9]{2,15}(?:医院|口腔医院|口腔诊所|口腔门诊部|牙科诊所|口腔中心|齿科|牙科|门诊部))/g,
-    /([\u4e00-\u9fa5A-Za-z0-9]{2,15}(?:医院|口腔医院|口腔诊所|口腔门诊部|牙科诊所|口腔中心|齿科|牙科|门诊部))/g
-  ];
-  var seen = {};
-  for (var pi = 0; pi < patterns.length; pi++) {
-    var pattern = patterns[pi];
-    var match;
-    while ((match = pattern.exec(text)) !== null) {
-      var name = match[match.length - 1].trim();
-      if (!seen[name] && name.length >= 4) {
-        seen[name] = true;
-        hospitals.push(name);
+  var found = [];    // { key, display, pos }
+  var filtered = []; // 被过滤掉的候选（便于审计）
+  var keyIndex = {};
+  var pattern = new RegExp('([\\u4e00-\\u9fa5A-Za-z0-9·]{2,20}' + HOSPITAL_SUFFIX + ')', 'g');
+  var match;
+  while ((match = pattern.exec(text)) !== null) {
+    // 连词拆分 + 语气词前缀剥离："宏康医院和上海宏康口腔" → 两个机构
+    var parts = match[1].split(/[和与及或]/);
+    for (var pi = 0; pi < parts.length; pi++) {
+      var name = parts[pi].replace(/^(其实|另外|就是|还有|包括|比如|例如|[和与及或有如像去在说看选找来把被让对从向])+/, '').trim();
+      if (!name) continue;
+      // 拆分后可能失去后缀（如"…医院在普陀设有分部和XX口腔"拆出的"…设有分部"），必须复检后缀
+      if (!new RegExp(HOSPITAL_SUFFIX + '$').test(name)) {
+        if (name.length >= 4 && filtered.indexOf(name) < 0) filtered.push(name);
+        continue;
+      }
+      if (!isValidHospitalName(name)) {
+        if (name.length >= 4 && filtered.indexOf(name) < 0) filtered.push(name);
+        continue;
+      }
+      var canon = canonicalHospital(name);
+      var key = canon || name.replace(/医院口腔(科)?$/, '医院').replace(/^上海市?/, '');
+      var display = canon || name;
+      if (keyIndex[key] === undefined) {
+        keyIndex[key] = found.length;
+        found.push({ key: key, display: display, pos: match.index });
+      } else {
+        var f = found[keyIndex[key]];
+        // 同一机构保留更完整的写法
+        if (!canon && display.length > f.display.length) f.display = display;
       }
     }
   }
-  return hospitals;
+  // 别名直接扫描：捕捉"九院""牙防所"这类无后缀但约定俗成的叫法
+  for (var alias in HOSPITAL_ALIAS) {
+    if (alias.length < 2) continue;
+    var idx = text.indexOf(alias);
+    if (idx >= 0) {
+      var canon2 = HOSPITAL_ALIAS[alias];
+      var already = keyIndex[canon2] !== undefined || found.some(function(f) { return f.display === canon2; });
+      if (!already) {
+        keyIndex[canon2] = found.length;
+        found.push({ key: canon2, display: canon2, pos: idx });
+      }
+    }
+  }
+  found.sort(function(a, b) { return a.pos - b.pos; });
+  extractHospitals.lastFiltered = filtered;
+  return found.map(function(f) { return f.display; });
 }
 
 function checkBrandMentioned(text, keywords) {
@@ -566,12 +804,16 @@ function renderApikeyPanel() {
   ALL_PLATFORMS.forEach(function(p) {
     var config = PLATFORM_CONFIG[p];
     var enabled = states[p] !== false;
-    var key = keys[p] || '';
+    var preset = getPresetKey(p);
+    var key = keys[p] || preset || '';
+    var isPreset = !keys[p] && !!preset;
     var card = document.createElement('div');
     card.className = 'apikey-card' + (enabled ? '' : ' disabled');
-    var modelLine = '模型: ' + config.model;
-    if (p === 'wenxin') modelLine += '<br><span style="color:#f59e0b">⚠ 文心需填入access_token（通过API Key+Secret Key在千帆平台换取）</span>';
-    else if (p === 'doubao') modelLine += '<br><span style="color:#888">⚠ 如有专属endpoint ID请替换模型名</span>';
+    var modelLine = '模型: ' + config.model + (isPreset ? ' <span style="color:#16a34a;font-weight:bold">· 已内置Key</span>' : '');
+    if (p === 'wenxin') modelLine += '<br><span style="color:#16a34a">bce-v3 Key 已内置并实测可用（千帆v2接口直连，无需换access_token）</span>';
+    else if (p === 'deepseek') modelLine += '<br><span style="color:#f59e0b">⚠ 原Key已于2026-09失效，需重新申请填入</span>';
+    else if (p === 'doubao') modelLine += '<br><span style="color:#888">⚠ 暂无内置Key；如有专属endpoint ID请替换模型名</span>';
+    else if (p === 'qwen') modelLine += '<br><span style="color:#888">⚠ 暂无内置Key，需手动填入</span>';
     card.innerHTML =
       '<div class="apikey-card-header">' +
         '<div class="apikey-card-name"><span class="apikey-dot ' + (enabled ? 'on' : 'off') + '" id="key-dot-' + p + '"></span>' + config.name + '</div>' +
@@ -634,9 +876,10 @@ function getEnabledPlatformConfigs() {
   var keys = getStoredKeys();
   var states = getPlatformStates();
   return ALL_PLATFORMS.filter(function(p) {
-    return states[p] !== false && keys[p] && keys[p].trim() !== '';
+    var k = keys[p] || getPresetKey(p);
+    return states[p] !== false && k && k.trim() !== '';
   }).map(function(p) {
-    return { platform: p, apiKey: keys[p], enabled: true };
+    return { platform: p, apiKey: keys[p] || getPresetKey(p), enabled: true };
   });
 }
 
@@ -903,7 +1146,7 @@ async function runPlatform(platform, apiKey, questions) {
         question_id: qid, platform: platform, question: question,
         full_reply: reply, target_store_mentioned: targetMentioned,
         target_store_rank: targetRank, competitors_mentioned: competitors,
-        all_mentioned_hospitals: hospitals, timestamp: Date.now()
+        all_mentioned_hospitals: hospitals, filtered_out: (extractHospitals.lastFiltered || []), timestamp: Date.now()
       };
       jobData.results[qid][platform] = result;
       jobData.progress[platform].done++;
@@ -1124,7 +1367,29 @@ function showRankingModal(q, sorted) {
     }).join('');
     return '<div class="ranking-item' + (isT ? ' target' : '') + '"><div class="rank-num ' + rc + '">' + (idx + 1) + '</div><div class="brand-name">' + escapeHtml(n) + '</div><div class="mention-count">提及' + info.count + '次</div><div class="plat-icons">' + picons + '</div></div>';
   }).join('');
-  body.innerHTML = '<div class="ranking-list">' + html + '</div>';
+  // 各平台原始出现顺序（AI回答中的真实排序）
+  var orderHtml = '';
+  (jobData.enabledPlatforms || []).forEach(function(p) {
+    var r = jobData.results[q.id] && jobData.results[q.id][p];
+    if (!r || r.error || !r.all_mentioned_hospitals || r.all_mentioned_hospitals.length === 0) return;
+    orderHtml += '<div style="margin-top:6px;font-size:12px;color:#666"><span class="plat-icon ' + PLATFORM_CONFIG[p].bg + '">' + PLATFORM_CONFIG[p].sn + '</span> ' +
+      r.all_mentioned_hospitals.map(function(h, i) {
+        var isT2 = targetKeywords.some(function(kw) { return h.indexOf(kw) >= 0; });
+        return (i + 1) + '.' + (isT2 ? '<b style="color:#E53935">' + escapeHtml(h) + '</b>' : escapeHtml(h));
+      }).join(' → ') + '</div>';
+  });
+  if (orderHtml) orderHtml = '<div style="margin-top:16px;padding-top:12px;border-top:1px dashed #F0E0C0"><div style="font-size:13px;font-weight:bold;color:#8B6914;margin-bottom:6px">📋 各平台回答中的原始出现顺序</div>' + orderHtml + '</div>';
+  // 被过滤的非机构提及（审计透明）
+  var filteredSet = {};
+  (jobData.enabledPlatforms || []).forEach(function(p) {
+    var r = jobData.results[q.id] && jobData.results[q.id][p];
+    if (r && r.filtered_out) r.filtered_out.forEach(function(f) { filteredSet[f] = true; });
+  });
+  var filteredList = Object.keys(filteredSet);
+  var filteredHtml = filteredList.length
+    ? '<div style="margin-top:12px;font-size:12px;color:#999">🚫 已自动过滤 ' + filteredList.length + ' 条非机构提及：' + filteredList.map(escapeHtml).join('、') + '</div>'
+    : '';
+  body.innerHTML = '<div class="ranking-list">' + html + '</div>' + orderHtml + filteredHtml;
   document.getElementById('ranking-modal').classList.add('active');
 }
 
@@ -1189,8 +1454,19 @@ function escapeHtml(s) {
 }
 
 function loadPresetQuestions() {
-  document.getElementById('questions-input').value = DEFAULT_QUESTIONS.join('\n');
-  document.getElementById('brand-input').value = DEFAULT_BRAND;
+  var sel = document.getElementById('client-select');
+  loadClient(sel ? sel.value : 'custom');
+}
+function loadClient(cid) {
+  var c = PRESET_CLIENTS[cid];
+  if (c) {
+    document.getElementById('questions-input').value = c.questions.join('\n');
+    document.getElementById('brand-input').value = c.brand;
+    showToast('info', '已载入客户', c.label + '，共 ' + c.questions.length + ' 题');
+  } else {
+    document.getElementById('questions-input').value = DEFAULT_QUESTIONS.join('\n');
+    document.getElementById('brand-input').value = DEFAULT_BRAND;
+  }
   updateEstimate();
 }
 
