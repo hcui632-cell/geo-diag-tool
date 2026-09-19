@@ -318,7 +318,7 @@ var PLATFORM_CONFIG = {
   deepseek: { name: 'DeepSeek', bg: 'ds', sn: 'DS', color: '#60a5fa', model: 'deepseek-chat', url: 'https://api.deepseek.com/v1/chat/completions', perQuestionMs: 6000, rateLimit: 10 },
   kimi:     { name: 'Kimi',     bg: 'km', sn: 'KM', color: '#c084fc', model: 'kimi-k3', url: 'https://api.moonshot.cn/v1/chat/completions', perQuestionMs: 20000, rateLimit: 3 },
   wenxin:   { name: '文心一言',  bg: 'wx', sn: 'WX', color: '#fbbf24', model: 'ernie-4.0-8k-latest', url: 'https://qianfan.baidubce.com/v2/chat/completions', perQuestionMs: 1000, rateLimit: 60 },
-  doubao:   { name: '豆包',     bg: 'db', sn: 'DB', color: '#34d399', model: 'doubao-seed-2-0-lite-260215', url: 'https://ark.cn-beijing.volces.com/api/v3/chat/completions', perQuestionMs: 6000, rateLimit: 10 },
+  doubao:   { name: '豆包',     bg: 'db', sn: 'DB', color: '#34d399', model: 'doubao-seed-2-1-turbo-260628', url: 'https://ark.cn-beijing.volces.com/api/v3/chat/completions', perQuestionMs: 6000, rateLimit: 10 },
   qwen:     { name: '通义千问',   bg: 'qw', sn: 'QW', color: '#f472b6', model: 'qwen-plus', url: 'https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions', perQuestionMs: 6000, rateLimit: 10 }
 };
 var ALL_PLATFORMS = ['deepseek', 'kimi', 'wenxin', 'doubao', 'qwen'];
@@ -329,7 +329,7 @@ var PRESET_KEYS_OBF = {
   deepseek: 'KTF3Y2xpaDxibGo8Yzk+bj9tYztrOTg7bzljY2o+PmJsbW8=',  // 2026-09-17 新Key已内置并实测可用
   kimi: 'KTF3LykfCA4PbAAQLGwoHTQ8HBMLFgwTGRMbLSs9MDEDMjsXbxccaWw7IipiMxc2DzMN',  // moonshot.cn 官方平台Key（浏览器CORS可用）
   wenxin: 'ODk/dyxpdRsWDhsRd2gWOQM/OTI0Az8IOyAYIBUrOStuNXU+OGloOztuPm4+bWs/bzhqOz5iYj9pPGI5bD9oY2o5bT5oa2o5Pm87',  // 2026-09-17 新Key（旧Key真实请求超时挂起）
-  doubao: 'DCIZPRQsFg4fdBkyGCg/Ej4CDzYIAzhoNgMLMQ8iCBIIFh8WDjAjCj0SHRsfKx8VLG4gHm5sKQ82IzIfE283PzsKYgkfdAw/HRJoFBY4IB8KLTkPaDMPPwo+Kh47HTcWaBRvIx05HhIJPDI7D2M5NzIRNzNuFQASABAYdw0FMh0oYyIwL2JrIjAvChMDFmo3CzZpFS81Yw5jMQI9PwA=',  // 2026-09-19 内置；账户需先开通 doubao-seed-2-0-lite-260215 模型
+  doubao: 'Oygxd2tuaDg+aWtsd2Nubzt3bmhvY3c7amk+dz9qPz4/P2w4Y2ljaHdsP2k+bQ==',  // 2026-09-19 更换为 ark- 新Key，模型 seed-2-1-turbo 已开通实测
   qwen: 'KTF3LSl3EnQKEx4XAgMXdDcJGwp0Fx8PGRMeFh4WPAJtAg03KCkqKhk+OR9iMBwfKR8CIxEcEhwbGzNsHhE+CxVrLxY7GzMfGzRvLBQ3MB9qKmICPRkQFD4rL28/AhIqFBADEjATDCg7LxEiHik0MGgWNmo='  // 2026-09-19 内置并实测可用
 };
 function deobfuscateKey(s) {
@@ -812,7 +812,7 @@ function renderApikeyPanel() {
     var modelLine = '模型: ' + config.model + (isPreset ? ' <span style="color:#16a34a;font-weight:bold">· 已内置Key</span>' : '');
     if (p === 'wenxin') modelLine += '<br><span style="color:#16a34a">bce-v3 Key 已内置并实测可用（千帆v2接口直连，无需换access_token）</span>';
     else if (p === 'deepseek') modelLine += '<br><span style="color:#16a34a">新Key已内置并实测可用（2026-09-17 更新）</span>';
-    else if (p === 'doubao') modelLine += '<br><span style="color:#f59e0b">⚠ Key已内置；账户尚未开通该模型，请先在火山方舟控制台开通 doubao-seed-2.0-lite（模型广场搜索→开通，有免费额度）</span>';
+    else if (p === 'doubao') modelLine += '<br><span style="color:#16a34a">doubao-seed-2.1-turbo Key 已内置并实测可用（2026-09-19）</span>';
     else if (p === 'qwen') modelLine += '<br><span style="color:#16a34a">qwen-plus Key 已内置并实测可用（2026-09-19）</span>';
     card.innerHTML =
       '<div class="apikey-card-header">' +
