@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>宏康医院 GEO 优化 · 第一阶段成效对比报告</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Microsoft YaHei",Roboto,sans-serif;background:#f1f5f9;color:#0f172a}
+.topbar{background:#0f172a;color:#fff;padding:0 28px;position:sticky;top:0;z-index:50;box-shadow:0 2px 8px rgba(0,0,0,.25)}
+.topbar-inner{max-width:1240px;margin:0 auto;display:flex;align-items:center;gap:26px;min-height:64px;flex-wrap:wrap;padding:8px 0}
+.brand{font-size:16px;font-weight:700;white-space:nowrap;display:flex;align-items:center;gap:8px}
+.brand .sub{font-size:11px;color:#94a3b8;font-weight:400}
+.nav{display:flex;gap:8px;flex-wrap:wrap}
+.nav-btn{padding:9px 20px;border-radius:9px;cursor:pointer;color:#e2e8f0;background:#1e293b;font-size:13.5px;font-weight:600;display:flex;align-items:center;gap:6px;transition:all .2s;user-select:none;border:1px solid #334155}
+.nav-btn:hover{background:#334155;color:#fff}
+.nav-btn.active{background:#0ea5e9;color:#fff;border-color:#0ea5e9}
+.wrap{max-width:1240px;margin:0 auto;padding:24px 28px 60px}
+.card{background:#fff;border-radius:16px;padding:24px;box-shadow:0 1px 3px rgba(0,0,0,.1);margin-bottom:24px}
+.section-title{font-size:20px;font-weight:700;color:#0f172a;margin-bottom:4px}
+.section-sub{font-size:13px;color:#64748b;margin-bottom:18px}
+/* ===== 顶部结论横幅：实心渐变 ===== */
+.hero{background:linear-gradient(120deg,#075985 0%,#0284c7 55%,#0ea5e9 100%);border-radius:18px;padding:30px 34px;color:#fff;margin-bottom:24px;box-shadow:0 8px 24px -6px rgba(2,132,199,.45);display:flex;align-items:center;gap:36px;flex-wrap:wrap}
+.hero-main{flex:1;min-width:300px}
+.hero-tag{display:inline-block;background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.35);padding:3px 12px;border-radius:999px;font-size:12px;font-weight:600;margin-bottom:12px}
+.hero-title{font-size:17px;font-weight:600;opacity:.92;margin-bottom:8px}
+.hero-big{font-size:46px;font-weight:900;line-height:1.1;letter-spacing:.5px}
+.hero-big .arrow{font-size:26px;opacity:.6;margin:0 8px;font-weight:400}
+.hero-delta{display:inline-block;background:#22c55e;color:#fff;font-size:16px;font-weight:800;padding:4px 14px;border-radius:9px;margin-left:12px;vertical-align:middle}
+.hero-side{display:flex;flex-direction:column;gap:10px;min-width:250px}
+.hero-item{background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.22);border-radius:12px;padding:10px 16px;font-size:13.5px;font-weight:600;display:flex;justify-content:space-between;gap:14px}
+.hero-item b{font-size:17px;font-weight:800;white-space:nowrap}
+/* ===== KPI 卡：实心配色 ===== */
+.kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-bottom:24px}
+.kpi-card{border-radius:16px;padding:20px 22px;box-shadow:0 2px 8px rgba(15,23,42,.08);border:1px solid rgba(15,23,42,.06)}
+.kpi-card.c-blue{background:#eff6ff;border-top:4px solid #3b82f6}
+.kpi-card.c-green{background:#f0fdf4;border-top:4px solid #22c55e}
+.kpi-card.c-amber{background:#fffbeb;border-top:4px solid #f59e0b}
+.kpi-card.c-violet{background:#f5f3ff;border-top:4px solid #8b5cf6}
+.kpi-label{font-size:12.5px;color:#64748b;font-weight:600;margin-bottom:10px}
+.kpi-value{font-size:28px;font-weight:900;color:#0f172a;line-height:1.15}
+.kpi-value .arrow{font-size:16px;color:#94a3b8;font-weight:500;margin:0 5px}
+.kpi-delta{font-size:12px;font-weight:800;margin-top:8px;display:inline-block;padding:3px 10px;border-radius:7px}
+.delta-up{background:#16a34a;color:#fff}
+.kpi-note{font-size:11.5px;color:#64748b;margin-top:8px}
+h3.blk{font-size:16px;font-weight:700;margin:22px 0 12px;color:#1e293b}
+table{width:100%;border-collapse:collapse}
+th{padding:10px 8px;text-align:left;font-weight:600;color:#64748b;border-bottom:2px solid #e2e8f0;font-size:12px;white-space:nowrap}
+td{padding:10px 8px;border-bottom:1px solid #f1f5f9;font-size:13px;vertical-align:top}
+tr:hover td{background:#f8fafc}
+.bdg{display:inline-block;padding:2px 9px;border-radius:6px;font-size:11.5px;font-weight:700;white-space:nowrap}
+.bdg-up{background:#dcfce7;color:#16a34a}
+.bdg-down{background:#fee2e2;color:#dc2626}
+.bdg-new{background:#dbeafe;color:#2563eb}
+.bdg-lost{background:#fef3c7;color:#d97706}
+.bdg-none{background:#f1f5f9;color:#94a3b8}
+.bdg-flat{background:#f1f5f9;color:#64748b}
+.rank-pill{display:inline-block;min-width:44px;text-align:center;padding:2px 8px;border-radius:6px;font-size:12px;font-weight:700}
+.rank-good{background:#eff6ff;color:#1d4ed8}
+.rank-no{background:#f8fafc;color:#cbd5e1;font-weight:400}
+.cat-tag{display:inline-block;padding:1px 8px;border-radius:4px;font-size:11px;font-weight:600}
+.cat-need{background:#e0f2fe;color:#0369a1}
+.cat-trust{background:#f3e8ff;color:#7c3aed}
+.cat-decide{background:#fef9c3;color:#a16207}
+.plat-tag{display:inline-block;padding:1px 8px;border-radius:4px;font-size:11px;font-weight:700}
+.plat-deepseek{background:#ede9fe;color:#6d28d9}
+.plat-wenxin{background:#dbeafe;color:#1d4ed8}
+.plat-kimi{background:#fef3c7;color:#b45309}
+.concl{background:#fff;border-radius:16px;box-shadow:0 1px 3px rgba(0,0,0,.1);padding:24px;margin-bottom:24px}
+.concl li{margin:10px 0 10px 18px;font-size:14px;line-height:1.8;color:#334155}
+.concl b{color:#0369a1}
+.next-step{background:#0f172a;border-radius:16px;padding:22px 26px;color:#e2e8f0;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.next-step .tag{background:#0ea5e9;color:#fff;font-weight:800;font-size:13px;padding:5px 14px;border-radius:8px;white-space:nowrap}
+.next-step p{font-size:14px;line-height:1.75;flex:1;min-width:280px}
+.chip{display:inline-block;background:#fff;border:1px solid #e2e8f0;border-radius:8px;padding:6px 12px;margin:0 8px 8px 0;font-size:12.5px;color:#334155;cursor:default}
+.chip b{color:#0ea5e9;margin-right:4px}
+.tab-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;align-items:center}
+.tab-btn{padding:8px 18px;border-radius:8px;cursor:pointer;font-size:13px;border:1px solid #cbd5e1;background:#f1f5f9;font-weight:600;color:#334155;transition:all .2s;user-select:none}
+.tab-btn:hover{background:#e2e8f0}
+.tab-btn.active{background:#0ea5e9;color:#fff;border-color:#0ea5e9}
+.search-box{padding:9px 14px;border:1px solid #e2e8f0;border-radius:10px;font-size:13.5px;outline:none;width:240px}
+.search-box:focus{border-color:#0ea5e9;box-shadow:0 0 0 3px rgba(14,165,233,.12)}
+select.filter{padding:9px 12px;border:1px solid #e2e8f0;border-radius:10px;font-size:13px;background:#fff;outline:none}
+.progress-track{height:9px;border-radius:5px;background:#e2e8f0;overflow:hidden;margin-top:8px}
+.progress-fill{height:100%;border-radius:5px;background:#0ea5e9}
+.mini-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:16px;margin-bottom:24px}
+.plat-card{background:#fff;border-radius:16px;padding:22px;box-shadow:0 2px 8px rgba(15,23,42,.08);border-top:5px solid #0ea5e9}
+.plat-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.plat-name{font-size:17px;font-weight:800}
+.plat-big{font-size:34px;font-weight:900;line-height:1.1}
+.plat-big .old{font-size:18px;color:#94a3b8;font-weight:600}
+.metric-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+.metric-cell{background:#f1f5f9;border-radius:10px;padding:10px 12px;flex:1;min-width:70px;text-align:center}
+.metric-v{font-size:18px;font-weight:800;color:#0f172a}
+.metric-l{font-size:11px;color:#64748b;margin-top:3px}
+.footer-note{font-size:12px;color:#94a3b8;text-align:center;margin-top:30px;line-height:1.8}
+.legend{display:flex;gap:18px;font-size:12px;color:#64748b;margin-bottom:10px}
+.legend span{display:flex;align-items:center;gap:6px}
+.legend i{display:inline-block;width:12px;height:12px;border-radius:3px}
+@media(max-width:760px){.wrap{padding:16px 14px 50px}.hero-big{font-size:34px}}
+</style>
+</head>
+<body>
+<div class="topbar"><div class="topbar-inner">
+  <div class="brand">🦷 宏康医院 GEO 优化 · 第一阶段成效对比<br><span class="sub">基线（8月） vs 复测（9月） · 50题 × 3平台 × 2轮 · 300条AI原文全量重算</span></div>
+  <div class="nav" id="nav"></div>
+</div></div>
+<div class="wrap">
+
+<div class="footer-note">
+  数据来源：宏康GEO「基线 + 复测」AI原文数据包（300条回复全量程序化重算） · 2026年9月 · 口腔KA综合东区组
+</div>
+</div>
+<script>
+const DATA = {"summary":{"platforms":{"deepseek":{"name":"DeepSeek","base":{"mentioned":6,"total":50,"pct":12.0,"avg_rank":5.7,"top1":0,"top3":1,"top5":3},"re":{"mentioned":17,"total":50,"pct":34.0,"avg_rank":5.1,"top1":1,"top3":8,"top5":11},"delta_pp":22.0,"new":14,"lost":3,"improved":1,"declined":2},"wenxin":{"name":"文心一言","base":{"mentioned":25,"total":50,"pct":50.0,"avg_rank":4.0,"top1":3,"top3":14,"top5":20},"re":{"mentioned":39,"total":50,"pct":78.0,"avg_rank":6.1,"top1":5,"top3":9,"top5":19},"delta_pp":28.0,"new":19,"lost":5,"improved":6,"declined":13},"kimi":{"name":"Kimi","base":{"mentioned":18,"total":50,"pct":36.0,"avg_rank":6.6,"top1":0,"top3":3,"top5":6},"re":{"mentioned":23,"total":50,"pct":46.0,"avg_rank":8.3,"top1":0,"top3":1,"top5":6},"delta_pp":10.0,"new":9,"lost":4,"improved":5,"declined":7}},"overall":{"base":{"mentioned":49,"total":150,"pct":32.7,"avg_rank":5.1,"top1":3,"top3":18,"top5":29},"re":{"mentioned":79,"total":150,"pct":52.7,"avg_rank":6.5,"top1":6,"top3":18,"top5":36},"delta_pp":20.0},"cats":{"项目需求":{"base":{"mentioned":12,"total":48,"pct":25.0},"re":{"mentioned":27,"total":48,"pct":56.2},"delta_pp":31.2},"信任验证":{"base":{"mentioned":13,"total":42,"pct":31.0},"re":{"mentioned":21,"total":42,"pct":50.0},"delta_pp":19.0},"决策对比":{"base":{"mentioned":24,"total":60,"pct":40.0},"re":{"mentioned":31,"total":60,"pct":51.7},"delta_pp":11.7}},"union":{"base":33,"re":43,"base_pct":66.0,"re_pct":86.0,"new":12,"both_invisible":5,"both_invisible_qids":["HK-05","HK-08","HK-14","HK-31","HK-32"],"new_qids":["HK-04","HK-06","HK-09","HK-11","HK-12","HK-15","HK-20","HK-28","HK-39","HK-41","HK-45","HK-48"]},"rank_up":[{"plat":"kimi","qid":"HK-10","query":"普陀区有没有能做全口种植的医院？父母牙掉了好几颗","cat":"项目需求","base_rank":11,"re_rank":5,"delta":6},{"plat":"kimi","qid":"HK-33","query":"上海普陀区哪家口腔医院有独立诊室？不想在开放区看牙","cat":"决策对比","base_rank":10,"re_rank":4,"delta":6},{"plat":"wenxin","qid":"HK-29","query":"上海普陀区种植牙各家医院都用什么品牌？瑞士和韩国的差价多少？","cat":"决策对比","base_rank":10,"re_rank":5,"delta":5},{"plat":"deepseek","qid":"HK-50","query":"普陀区规模最大的口腔医疗机构是哪家？大机构是不是更让人放心？","cat":"信任验证","base_rank":5,"re_rank":1,"delta":4},{"plat":"wenxin","qid":"HK-21","query":"普陀区种植牙用进口还是国产的好？哪家医院品牌选择多？","cat":"决策对比","base_rank":8,"re_rank":5,"delta":3},{"plat":"wenxin","qid":"HK-38","query":"普陀区种植牙做得最好的医院推荐一下，患者评价高的有哪些？","cat":"信任验证","base_rank":6,"re_rank":3,"delta":3},{"plat":"kimi","qid":"HK-50","query":"普陀区规模最大的口腔医疗机构是哪家？大机构是不是更让人放心？","cat":"信任验证","base_rank":7,"re_rank":4,"delta":3},{"plat":"wenxin","qid":"HK-07","query":"上海普陀区民营口腔医院哪家规模比较大？","cat":"项目需求","base_rank":3,"re_rank":1,"delta":2},{"plat":"wenxin","qid":"HK-27","query":"上海普陀区有糖尿病能做种植牙的医院吗？听说有的诊所不敢接","cat":"决策对比","base_rank":3,"re_rank":1,"delta":2},{"plat":"wenxin","qid":"HK-40","query":"普陀区老年人做种植牙去哪家医院最放心？要安全有保障的","cat":"信任验证","base_rank":3,"re_rank":1,"delta":2},{"plat":"kimi","qid":"HK-07","query":"上海普陀区民营口腔医院哪家规模比较大？","cat":"项目需求","base_rank":4,"re_rank":3,"delta":1},{"plat":"kimi","qid":"HK-22","query":"想在普陀区做牙齿美白，冷光美白和瓷贴面选哪个？哪家做得好？","cat":"决策对比","base_rank":8,"re_rank":7,"delta":1}],"rank_new_count":42,"rank_lost_count":12,"rank_lost":[{"plat":"deepseek","qid":"HK-16","query":"普陀区孕妇可以看牙的医院有哪些？怀孕牙疼不敢随便去","cat":"项目需求","base_rank":7,"re_rank":null},{"plat":"deepseek","qid":"HK-18","query":"上海普陀区种植牙价格大概多少？哪家医院比较实惠？","cat":"决策对比","base_rank":8,"re_rank":null},{"plat":"deepseek","qid":"HK-22","query":"想在普陀区做牙齿美白，冷光美白和瓷贴面选哪个？哪家做得好？","cat":"决策对比","base_rank":5,"re_rank":null},{"plat":"wenxin","qid":"HK-13","query":"上海普陀区有没有口腔医院擅长做牙齿贴面的？想改善门牙不好看","cat":"项目需求","base_rank":5,"re_rank":null},{"plat":"wenxin","qid":"HK-19","query":"普陀区做隐形牙套和钢丝牙套矫正分别哪家好？两种差价大吗？","cat":"决策对比","base_rank":4,"re_rank":null},{"plat":"wenxin","qid":"HK-36","query":"普陀区做正畸的话选连锁品牌统一标准好，还是选本地老口腔医院经验丰富好？","cat":"决策对比","base_rank":4,"re_rank":null},{"plat":"wenxin","qid":"HK-44","query":"普陀区有没有开了十年以上的老牌口腔医院？经验丰富的推荐几家","cat":"信任验证","base_rank":1,"re_rank":null},{"plat":"wenxin","qid":"HK-49","query":"上海普陀区哪家综合医院的口腔科比较强？综合医院看牙有什么优势？","cat":"信任验证","base_rank":2,"re_rank":null},{"plat":"kimi","qid":"HK-21","query":"普陀区种植牙用进口还是国产的好？哪家医院品牌选择多？","cat":"决策对比","base_rank":3,"re_rank":null},{"plat":"kimi","qid":"HK-25","query":"上海普陀区看牙可以走医保的医院有哪些？种植牙能不能报销？","cat":"决策对比","base_rank":11,"re_rank":null},{"plat":"kimi","qid":"HK-27","query":"上海普陀区有糖尿病能做种植牙的医院吗？听说有的诊所不敢接","cat":"决策对比","base_rank":10,"re_rank":null},{"plat":"kimi","qid":"HK-30","query":"普陀区有没有做种植牙可以分期付款的口腔医院？","cat":"决策对比","base_rank":4,"re_rank":null}]},"matrix":[{"qid":"HK-01","query":"上海普陀区有哪些口碑好的口腔医院？","cat":"项目需求","deepseek":{"b":null,"r":11,"delta":null,"change":"new","b_h":["上海市普陀区眼病牙病防治所","上海摩尔口腔医院","社区标准化口腔","作为普陀区首家市级标准化口腔","同济大学附属同济医院","体验可能比大医院"],"r_h":["私立口腔","上海市普陀区眼病牙病防治所","上海摩尔口腔医院","私立专科医院","华尔康中博普众口腔医院","独栋专科医院","上海美维馨口腔门诊部","私立门诊部"]},"wenxin":{"b":5,"r":12,"delta":-7,"change":"keep","b_h":["上海摩尔口腔医院","上海中博普众口腔医院","华尔康口腔医院","上海伊尔意口腔门诊部","上海宏康医院","美维馨口腔门诊部","能够开展多种口腔"],"r_h":["同济大学附属同济医院口腔","三甲公立医院口腔","普陀区中心医院口腔","上海市第六人民医院口腔","综合医院口腔","上海维乐口腔","全国二级口腔","上海伊尔意口腔"]},"kimi":{"b":null,"r":14,"delta":null,"change":"new","b_h":[],"r_h":["上海普陀区口腔","三乙综合医院口腔","上海市同济医院口腔","同济大学附属同济医院门诊部","患有复杂口腔","上海市普陀区中心医院口腔","区属三级乙等综合性医院","上海市儿童医院口腔"]},"union_base":true,"union_re":true},{"qid":"HK-02","query":"普陀区种植牙去哪家医院比较靠谱？","cat":"项目需求","deepseek":{"b":null,"r":null,"delta":null,"change":"none","b_h":["上海市普陀区眼病牙病防治所","同济大学附属同济医院","上海摩尔口腔医院","我把这几家医院","配有德国进口口腔","希望在三甲医院","希望在专科医院","目前上海公立医院"],"r_h":["上海市普陀区眼病牙病防治所","上海摩尔口腔医院","普陀区种植牙医院","了普陀区口腔","参加了口腔","果你更看重公立医院","华尔康中博普众口腔医院"]},"wenxin":{"b":3,"r":9,"delta":-6,"change":"keep","b_h":["多家医院","上海拜博口腔","上海宏康医院","上海天佑医院口腔","上海正睿口腔","上海市普陀区中心医院口腔","上海摩尔口腔医院","舟山市普陀区人民医院口腔"],"r_h":["公立综合医院口腔","品牌连锁口腔","公立医院口腔","上海市同济医院口腔","上海市普陀区中心医院口腔","上海市普陀区人民医院口腔","上海市普陀区利群医院口腔","上海拜博口腔"]},"kimi":{"b":7,"r":11,"delta":-4,"change":"keep","b_h":["综合性医院口腔","同济大学附属口腔医院","上海三大公立口腔专科医院","上海中医药大学附属普陀医院","普陀区中心医院","本区三级乙等综合性医院","上海宏康医院","院内口腔"],"r_h":["上海市普陀区中心医院","上海中医药大学附属普陀医院","区属龙头医院","作为综合医院口腔","上海市第十人民医院口腔","十院口腔中心","同济大学附属口腔医院","上海三大公立口腔"]},"union_base":true,"union_re":true},{"qid":"HK-03","query":"上海普陀区哪里做牙齿矫正好？成人正畸想找个专业的","cat":"项目需求","deepseek":{"b":null,"r":3,"delta":null,"change":"new","b_h":["上海市普陀区眼病牙病防治所","果你倾向于在公立专科医院","倾向选择公立医院","同济大学附属同济医院","希望在三甲综合医院","上海摩尔口腔医院","上海伊尔意口腔门诊部"],"r_h":["上海市同济医院","上海市普陀区眼病牙病防治所","上海宏康医院","摩尔口腔","n我将这些口腔","上海摩尔口腔医院","同济医院作为三甲医院","不过公立医院"]},"wenxin":{"b":8,"r":9,"delta":-1,"change":"keep","b_h":["以下几家口腔医院","上海市同济医院口腔","其他同济医院","需根据医院","上海市普陀区中心医院口腔","上海维乐口腔","需根据上海维乐口腔","上海宏康医院"],"r_h":["公立医院口腔","同济大学附属同济医院口腔","上海市普陀区中心医院口腔","上海市普陀区人民医院口腔","同济大学附属天佑医院口腔","上海维乐口腔","创办人刘文彤为前普陀区口腔","上海拜博口腔"]},"kimi":{"b":null,"r":6,"delta":null,"change":"new","b_h":["三甲医院口腔","同济大学附属口腔医院","上海市同济医院","同济大学附属同济医院","三级甲等综合性医院"],"r_h":["同济大学附属口腔医院","上海市第十人民医院口腔","这类综合医院","上海市普陀区中心医院口腔","拜博口腔","上海宏康医院","常有原公立医院"]},"union_base":true,"union_re":true},{"qid":"HK-04","query":"普陀区有没有能做全麻拔智齿的医院？","cat":"项目需求","deepseek":{"b":null,"r":null,"delta":null,"change":"none","b_h":["同济大学附属口腔医院","但作为同济口腔","利群医院","口腔颌面外科都明确对牙科","全麻下牙科","普陀区利群医院","上海市普陀区眼病牙病防治所","同济大学附属同济医院"],"r_h":["上海市同济医院","普陀区利群医院","上海交通大学医学院附属第九人民医院","能在社区医院","上海市普陀区眼病牙病防治所","直接致电医院","扩大搜索范围至市级医院","上海市口腔医院"]},"wenxin":{"b":null,"r":11,"delta":null,"change":"new","b_h":["多家医院","上海市同济医院口腔","牙齿美白等多种口腔","上海摩尔口腔医院","牙齿种植等口腔","普陀区利群医院口腔","种植修复等多种口腔"],"r_h":["私人诊所","同济大学附属同济医院","开展特大型口腔","同济医院","上海市普陀区利群医院","利群医院","上海市普陀区中心医院","上海中医药大学附属普陀医院"]},"kimi":{"b":null,"r":null,"delta":null,"change":"none","b_h":["睡眠牙科","同济大学附属口腔医院","上海市属三级口腔专科医院","上海市第十人民医院","同济大学附属第十人民医院","上述口腔医院","综合性三甲医院","上海市普陀区中心医院"],"r_h":["上海市同济医院","同济大学附属同济医院","三级甲等综合性医院","上海市普陀区中心医院","三级综合性医院","果上述医院","上海市第十人民医院","需拍摄口腔"]},"union_base":false,"union_re":true},{"qid":"HK-05","query":"上海普陀区带小孩看牙去哪好？孩子怕疼想找个耐心的","cat":"项目需求","deepseek":{"b":null,"r":null,"delta":null,"change":"none","b_h":["上海市普陀区眼病牙病防治所","上海华尔康中博普众口腔医院","泰康拜博口腔","上海市儿童医院","作为权威儿童专科医院","同济大学附属同济医院","舒适化口腔","Club口腔"],"r_h":["上海市儿童医院","瑞尔齿科","这类私立诊所","私立诊所","这种私立诊所"]},"wenxin":{"b":null,"r":null,"delta":null,"change":"none","b_h":["可考虑以下几家医院","上海市儿童医院口腔","科室在口腔","上海维乐口腔","具体门牌号需通过医院","维乐口腔在口腔","上海拜博口腔","上海天佑医院口腔"],"r_h":["综合医院儿科口腔","上海市普陀区眼病牙病防治所","开学季专门开设儿童口腔","还会入校做儿童口腔","上海市儿童医院口腔","上海市同济医院口腔","上海市普陀区中心医院口腔","上海维乐口腔"]},"kimi":{"b":null,"r":null,"delta":null,"change":"none","b_h":["极橙儿童齿科","同济大学附属口腔医院","专科号而非普通口腔","上海市普陀区中心医院","普陀区老牌综合性医院","拜博口腔","瑞尔齿科","瑞泰口腔"],"r_h":[]},"union_base":false,"union_re":false},{"qid":"HK-06","query":"普陀区补牙和做根管治疗哪家医院性价比高？","cat":"项目需求","deepseek":{"b":null,"r":2,"delta":null,"change":"new","b_h":["上海市普陀区眼病牙病防治所","上海华尔康中博普众口腔医院","两家医院","中博普众口腔医院"],"r_h":["上海市普陀区眼病牙病防治所","上海宏康医院","上海爱亚仕口腔门诊部","普通齿科","上海雪峰口腔门诊部","作为公立专科医院","果觉得去防治所","n你更倾向于去公立医院"]},"wenxin":{"b":null,"r":2,"delta":null,"change":"new","b_h":["维乐口腔","牙博士口腔","就近享受基础口腔"],"r_h":["上海市普陀区眼病牙病防治所","上海宏康医院","同济大学附属同济医院","普陀区中心医院口腔","上海正睿口腔","伊尔意口腔","上海星诺口腔","上海尤旦口腔"]},"kimi":{"b":null,"r":13,"delta":null,"change":"new","b_h":["上海市普陀区眼病牙病防治所","二级以上综合医院口腔","普陀区牙病防治所","上海市同济口腔医院","同济大学附属口腔医院","上海普陀区中心医院","口腔科作为综合医院","上级医院"],"r_h":["公立综合性医院","这类医院口腔","上海市普陀区中心医院","同济大学附属普陀医院","三级乙等综合性医院","上海市普陀区人民医院","二级甲等综合性医院","相比区中心医院"]},"union_base":false,"union_re":true},{"qid":"HK-07","query":"上海普陀区民营口腔医院哪家规模比较大？","cat":"项目需求","deepseek":{"b":null,"r":2,"delta":null,"change":"new","b_h":["上海华尔康中博普众口腔医院","普陀区主要民营口腔医院","上海摩尔口腔医院","隶属于摩尔齿科","隶属于华尔康口腔","摩尔齿科"],"r_h":["上海摩尔口腔医院","上海宏康医院","n我把这两家医院","科室设置会比其他口腔门诊部","果把医院","能依托医院","n民营医院","进一步帮你看看这两家医院"]},"wenxin":{"b":3,"r":1,"delta":2,"change":"keep","b_h":["上海拜博口腔","汇聚了拜博口腔","上海宏康口腔门诊部","上海宏康医院","始终致力于百姓口腔","美维馨口腔门诊部","但通常民营口腔门诊部","能开展多种口腔"],"r_h":["上海宏康医院","普陀区民营口腔","上海维乐·美维馨口腔门诊部","维乐口腔","上海拜博口腔","上海伊尔意口腔","正睿齿科","上海恒愿齿科·博雅口腔"]},"kimi":{"b":4,"r":3,"delta":1,"change":"keep","b_h":["上海市对口腔专科医院","综合医院内设口腔","属于普陀区民营口腔","上海宏康医院","医院本身为区域性大型民营综合医院","上海天佑医院口腔","同济大学附属天佑医院","按三级医院"],"r_h":["以下几家民营口腔","泰康拜博口腔","上海宏康医院","并非小型诊所","希望在综合医院","进行口腔","上海天佑医院口腔","大型综合性医院"]},"union_base":true,"union_re":true},{"qid":"HK-08","query":"普陀区中山北路附近有什么好的牙科？","cat":"项目需求","deepseek":{"b":null,"r":null,"delta":null,"change":"none","b_h":["上海华尔康星杰口腔医院","含儿童口腔","上海曹杨众植口腔门诊部","中大型口腔","上海申都口腔门诊部","上海泰康拜博星尔口腔门诊部","众植口腔","规模在门诊部"],"r_h":["聚洛口腔门诊部","余曦口腔诊所","史宏男私立口腔诊所","曹杨众植口腔门诊部","上海市普陀区眼病牙病防治所","普陀区中心医院","信赖公立医院","处理复杂口腔"]},"wenxin":{"b":null,"r":null,"delta":null,"change":"none","b_h":["上海曹杨众植口腔门诊部","泰康拜博口腔","美维馨口腔门诊部","能开展多种口腔"],"r_h":["上海华尔康口腔医院","多层独栋口腔医院","预防口腔","上海众植口腔门诊部","泰康拜博口腔","上海申都口腔门诊部","中瑞迈维口腔","众植口腔"]},"kimi":{"b":null,"r":null,"delta":null,"change":"none","b_h":["二甲医院","同济大学附属口腔医院","上海市第十人民医院口腔","作为综合医院","上海市普陀区中心医院口腔","上海市同济医院口腔"],"r_h":["同济大学附属口腔医院","上海市老牌公立三甲口腔专科医院","上海市第十人民医院口腔","三级甲等综合性医院口腔","以下两家公立综合医院","上海市普陀区中心医院","普陀区属三级乙等综合性医院","基础口腔"]},"union_base":false,"union_re":false},{"qid":"HK-09","query":"上海普陀区牙周炎治疗去哪个医院好？牙龈老是出血","cat":"项目需求","deepseek":{"b":null,"r":null,"delta":null,"change":"none","b_h":["上海市普陀区眼病牙病防治所","同济大学附属同济医院","每周还有普陀区中心医院"],"r_h":["上海市普陀区眼病牙病防治所","果觉得公立医院","上海摩尔口腔医院"]},"wenxin":{"b":null,"r":7,"delta":null,"change":"new","b_h":["以下几家医院","上海中医药大学附属普陀医院口腔","上海市普陀区中心医院口腔","该科室在口腔","牙龈出血等常见口腔","上海市普陀区人民医院口腔","该科室在常见口腔","上海市普陀区利群医院口腔"],"r_h":["公立医院口腔","上海中医药大学附属普陀医院","同济大学附属同济医院口腔","上海市普陀区中心医院口腔","上海市普陀区利群医院口腔","牙哈哈口腔·伊尔意口腔","上海宏康医院","上海维乐口腔"]},"kimi":{"b":null,"r":null,"delta":null,"change":"none","b_h":["同济大学附属口腔医院","上海市三大公立口腔专科医院","普陀区属公立综合医院","上海市普陀区中心医院","三级乙等综合性医院","具体以医院","上海市普陀区人民医院","上海市第十人民医院"],"r_h":["上海市同济医院口腔","具体以医院","上海市普陀区中心医院口腔","区域性三级综合医院","普陀区老牌公立医院","排队时间通常比三甲医院","同济大学附属口腔医院","上海市三级口腔专科医院"]},"union_base":false,"union_re":true},{"qid":"HK-10","query":"普陀区有没有能做全口种植的医院？父母牙掉了好几颗","cat":"项目需求","deepseek":{"b":null,"r":12,"delta":null,"change":"new","b_h":["全口种植对医院","上海市同济医院","上海市普陀区眼病牙病防治所","上海摩尔口腔医院","上海交通大学医学院附属第九人民医院","国家口腔","医生会先全面评估口腔","择像同济医院"],"r_h":["普陀区有几家医院","n下面这些医院","开展口腔","上海市同济医院","普陀区中心医院","公立二甲综合医院","普陀区人民医院","普陀区利群医院"]},"wenxin":{"b":3,"r":4,"delta":-1,"change":"keep","b_h":["多家医院","上海市普陀区中心医院口腔","上海宏康医院","上海维乐美达口腔门诊部","作为维乐口腔","上海星诺口腔门诊部","上海摩尔口腔医院"],"r_h":["品牌口腔","上海市同济大学附属同济医院口腔","上海市普陀区中心医院口腔","上海宏康医院","上海天佑医院口腔","公办医院","首选同济医院","上海正睿口腔"]},"kimi":{"b":11,"r":5,"delta":6,"change":"keep","b_h":["同济大学附属口腔医院","上海市口腔医院","上海市属三甲口腔专科医院","上海市普陀区中心医院","普陀区属三级综合性医院","希望在家门口公立医院","上海市普陀区人民医院","原上海纺织第一医院"],"r_h":["优先考虑公立三甲医院","上海市同济医院","同济大学附属同济医院","上海市普陀区中心医院","上海宏康医院","泰康拜博口腔","摩尔齿科","老年口腔"]},"union_base":true,"union_re":true},{"qid":"HK-11","query":"上海普陀区做烤瓷牙套去哪家好？想换个好点的材料","cat":"项目需求","deepseek":{"b":null,"r":null,"delta":null,"change":"none","b_h":["上海市普陀区眼病牙病防治所","一份来自上海第九人民医院口腔","上海交通大学医学院附属第九人民医院","上海摩尔口腔医院"],"r_h":["上海市普陀区眼病牙病防治所","上海摩尔口腔医院","n我把两家医院","私立口腔专科医院","作为专科医院","上海交通大学医学院附属第九人民医院","n这两家医院"]},"wenxin":{"b":null,"r":5,"delta":null,"change":"new","b_h":["以下几家医院","上海市普陀区中心医院口腔","开展包括口腔","上海维乐口腔门诊部","维乐口腔","上海伊尔意口腔门诊部"],"r_h":["公立医院口腔","上海市普陀区中心医院口腔","同济大学附属同济医院口腔","上海中医药大学附属普陀医院口腔","上海宏康医院","上海维乐口腔","上海正睿口腔","伊尔意口腔"]},"kimi":{"b":null,"r":7,"delta":null,"change":"new","b_h":["上海市普陀区中心医院","普陀区老牌公立二甲医院","公立医院口腔","同济大学附属口腔医院","上海口腔","上海市第十人民医院","综合性三甲医院","泰康拜博口腔"],"r_h":["公立医院口腔","综合医院口腔","同济大学附属口腔医院","上海市普陀区中心医院","普陀区老牌公立三乙综合医院","上海市普陀区人民医院","上海宏康医院","普陀区老牌民营综合医院"]},"union_base":false,"union_re":true},{"qid":"HK-12","query":"普陀区半夜牙疼去哪看急诊？有口腔急诊的医院吗？","cat":"项目需求","deepseek":{"b":null,"r":null,"delta":null,"change":"none","b_h":["普陀区中心医院","普陀区人民医院","普陀区利群医院","上海市内也有少数顶尖医院","上海市口腔医院","可先通过医院","上海交通大学医学院附属第九人民医院","上海市东方医院"],"r_h":["普陀区中心医院","这所公立二甲综合医院","上海市同济医院","同样作为大型公立三甲医院","具备处理口腔","上海市普陀区眼病牙病防治所","上海摩尔口腔医院","上海目前有医院开设全天候口腔"]},"wenxin":{"b":null,"r":2,"delta":null,"change":"new","b_h":["上海交大附属第九人民医院口腔","上海交通大学医学院附属第九人民医院","作为三甲医院","同济大学附属口腔医院","复旦大学附属中山医院口腔","综合医院口腔","上海摩尔口腔医院","品牌连锁专科医院"],"r_h":["上海口腔","上海宏康医院","可拨打医院总机转口腔","上海华美口腔","综合医院急诊科走口腔","同济大学附属同济医院","夜间口腔","由值班医生评估后请口腔"]},"kimi":{"b":null,"r":null,"delta":null,"change":"none","b_h":["先到综合医院","同济大学附属口腔医院","夜间有口腔","普陀区中心医院","作为普陀区综合性二甲医院","上海交通大学医学院附属第九人民医院","普陀区部分民营口腔"],"r_h":["同济大学附属口腔医院","上海市属三级口腔专科医院","上海市同济医院","同济大学附属同济医院","虽然其口腔","必要时可联系口腔","普陀区中心医院","普陀区三级综合性医院"]},"union_base":false,"union_re":true},{"qid":"HK-13","query":"上海普陀区有没有口腔医院擅长做牙齿贴面的？想改善门牙不好看","cat":"项目需求","deepseek":{"b":2,"r":4,"delta":-2,"change":"keep","b_h":["上海市普陀区眼病牙病防治所","上海宏康医院"],"r_h":["上海中医药大学附属普陀医院","普陀区中心医院","上海市普陀区眼病牙病防治所","上海宏康医院","自公立三甲医院"]},"wenxin":{"b":5,"r":null,"delta":null,"change":"lost","b_h":["上海普陀区有多家口腔医院","上海同济大学附属天佑口腔","上海维乐口腔","上海摩尔口腔医院","上海宏康医院","二级甲等综合性医院","上海恒愿齿科博雅口腔"],"r_h":["公立医院口腔","上海市普陀区中心医院口腔","同济大学附属同济医院口腔","上海中医药大学附属普陀医院口腔","上海维乐口腔","上海伊尔意口腔","正睿齿科","上海摩尔口腔"]},"kimi":{"b":9,"r":9,"delta":0,"change":"keep","b_h":["上海市同济医院","同济大学附属同济医院","三级甲等综合性医院","同济大学附属口腔医院","美容牙科","上海市普陀区中心医院","区内二级甲等综合性医院","上海市普陀区眼病牙病防治所"],"r_h":["上海市普陀区中心医院","普陀区属三级综合性医院","美容牙科","同济大学附属口腔医院","上海市三大口腔专科医院","上海市普陀区人民医院","二级甲等综合性医院","二甲医院"]},"union_base":true,"union_re":true},{"qid":"HK-14","query":"普陀区哪家医院能治颞下颌关节紊乱？张嘴有弹响","cat":"项目需求","deepseek":{"b":null,"r":null,"delta":null,"change":"none","b_h":["科室主要集中在第九人民医院","但有医院","上海交通大学医学院附属第九人民医院","长宁区天山中医医院","上海市普陀区眼病牙病防治所","同济大学附属口腔医院","上海摩尔口腔医院"],"r_h":["上海市普陀区眼病牙病防治所","上海交通大学医学院附属第九人民医院","九院口腔","但作为市级顶尖医院","同济大学附属口腔医院","同济大学附属同济医院"]},"wenxin":{"b":null,"r":null,"delta":null,"change":"none","b_h":["多家医院","上海市普陀区中心医院","上海中医药大学附属普陀医院","除了上述两家医院"],"r_h":["上海市普陀区中心医院","上海中医药大学附属普陀医院","三乙综合医院","同济大学附属同济医院口腔","上海市普陀区眼病牙病防治所","上海交通大学医学院附属第九人民医院","复旦口腔","同济大学附属口腔医院"]},"kimi":{"b":null,"r":null,"delta":null,"change":"none","b_h":["同济大学附属口腔医院","可选择以下综合医院","上海市同济医院","同济大学附属同济医院","普陀区老牌三级甲等综合医院","若需复杂专科干预可转诊至对口专科医院","上海市普陀区中心医院","部分医院"],"r_h":["因颞下颌关节专科多集中在口腔专科医院","普陀区内综合医院","同济大学附属同济医院","作为普陀区老牌三甲医院","上海市普陀区中心医院","同济大学附属口腔医院","上海市第十人民医院","十院口腔中心"]},"union_base":false,"union_re":false},{"qid":"HK-15","query":"上海普陀区有做牙齿松动固定的医院吗？不想直接拔掉","cat":"项目需求","deepseek":{"b":null,"r":null,"delta":null,"change":"none","b_h":["下面这几家医院","上海市普陀区眼病牙病防治所","同济大学附属同济医院","上海摩尔口腔医院","社区医院","等社区医院","每周还有普陀区中心医院"],"r_h":["上海市普陀区眼病牙病防治所","上海市同济医院","作为公立三甲医院","上海摩尔口腔医院"]},"wenxin":{"b":null,"r":5,"delta":null,"change":"new","b_h":["上海普陀区有多家医院","公立三甲医院口腔","上海交通大学医学院附属第九人民医院","作为三级甲等专科医院","复杂口腔","复旦大学附属华山医院","综合医院口腔","上海市第六人民医院"],"r_h":["上海市普陀区中心医院","上海中医药大学附属普陀医院","同济大学附属同济医院口腔","上海市普陀区眼病牙病防治所","上海宏康医院","原普陀区中医医院口腔","上海伊尔意口腔","正睿齿科"]},"kimi":{"b":null,"r":12,"delta":null,"change":"new","b_h":["上海市普陀区中心医院","普陀区属三级乙等综合性医院","上海市普陀区人民医院","原纺一医院","二级甲等综合性医院","同济大学附属口腔医院","上海市属三甲口腔专科医院","拜博口腔"],"r_h":["上海市同济医院口腔","同济大学附属同济医院","三级甲等综合性医院","上海市普陀区中心医院","上海中医药大学附属普陀医院","三级综合性医院","区内老牌公立医院","同济大学附属口腔医院"]},"union_base":false,"union_re":true},{"qid":"HK-16","query":"普陀区孕妇可以看牙的医院有哪些？怀孕牙疼不敢随便去","cat":"项目需求","deepseek":{"b":7,"r":null,"delta":null,"change":"lost","b_h":["目前没有找到普陀区内有医院","孕妇口腔","但这类医院","上海市第八人民医院","孕妇专属口腔","上海市同济医院","上海宏康医院"],"r_h":["上海市普陀区眼病牙病防治所","医院有开展过针对孕妇口腔","解决多种口腔","孕产妇口腔","明确地告知医院","上海摩尔口腔医院","作为上海市首批标准化口腔","任何医院"]},"wenxin":{"b":null,"r":9,"delta":null,"change":"new","b_h":["孕妇若出现牙疼等口腔","可选择以下具备专业资质且注重孕产妇口腔","孕产妇口腔","医生熟悉孕期口腔","帮助孕妇掌握孕期口腔","上海市普陀区人民医院口腔","上海市普陀区中心医院口腔","作为三乙综合医院"],"r_h":["孕期口腔","上海市普陀区中心医院","上海中医药大学附属普陀医院","专门讲孕产妇口腔","科室明确有孕产期口腔","三乙综合医院","最明确有孕期口腔","同济大学附属同济医院口腔"]},"kimi":{"b":null,"r":null,"delta":null,"change":"none","b_h":["上海市同济医院","同济大学附属同济医院","三级甲等综合性医院","上海市普陀区中心医院","上海市普陀区人民医院","作为综合性医院","上海市普陀区眼病牙病防治所","主要承担口腔"],"r_h":["综合医院口腔","必要时再去口腔","同济大学附属同济医院","上海市同济医院","急诊请走医院","上海市普陀区中心医院","三乙综合医院","人流量相比三甲专科医院"]},"union_base":true,"union_re":true},{"qid":"HK-17","query":"在普陀区做种植牙，去综合医院的口腔科好还是去专门的口腔诊所好？","cat":"决策对比","deepseek":{"b":null,"r":5,"delta":null,"change":"new","b_h":["综合医院口腔","上海市同济医院","上海市普陀区眼病牙病防治所","这两家医院","专门口腔诊所","上海摩尔口腔医院","专门诊所"],"r_h":["综合医院口腔","上海市同济医院","普陀区中心医院","上海市普陀区眼病牙病防治所","上海宏康医院","但其口腔","上海华尔康中博普众口腔医院"]},"wenxin":{"b":4,"r":10,"delta":-6,"change":"keep","b_h":["综合医院口腔","上海天佑医院口腔","专门口腔诊所","上海宏康医院","上海拜博口腔","优先选综合医院口腔","可考虑专门口腔诊所","追求医疗规范性选综合医院"],"r_h":["专门口腔诊所","综合医院口腔","穿颧穿翼等超疑难手术只有综合医院","神经管旁种植部分诊所","公立大医院","同济医院口腔","同济大学附属同济医院口腔","普陀区口腔"]},"kimi":{"b":null,"r":null,"delta":null,"change":"none","b_h":["综合医院口腔","上海市同济医院","普陀区中心医院","二甲医院","小型诊所","普陀区老牌三甲医院","排队相对三甲医院","拜博口腔"],"r_h":["综合医院口腔","高端诊所","部分小诊所","小型诊所","单体小诊所","优先选三甲综合医院","上海市同济医院","上海市第十人民医院口腔"]},"union_base":true,"union_re":true},{"qid":"HK-18","query":"上海普陀区种植牙价格大概多少？哪家医院比较实惠？","cat":"决策对比","deepseek":{"b":8,"r":null,"delta":null,"change":"lost","b_h":["以下医院","上海市同济医院","普陀区中心医院","普陀区人民医院","普陀区利群医院","上海市普陀区眼病牙病防治所","上海摩尔口腔医院","上海宏康医院"],"r_h":["不同医院","n我为你整理了两类代表性医院","代表医院","上海市普陀区眼病牙病防治所","上海摩尔口腔医院","华尔康中博普众口腔医院","摩尔口腔"]},"wenxin":{"b":2,"r":4,"delta":-2,"change":"keep","b_h":["实惠医院","上海宏康医院","上海交通大学医学院附属第九人民医院","留日口腔","免费口腔","维乐口腔","上海顾嘉口腔","覆盖全场景口腔"],"r_h":["牙哈哈口腔","中瑞迈维口腔","上海维乐口腔","上海宏康医院","原公立三甲口腔","同济大学附属同济医院口腔","上海中医药大学附属普陀医院口腔","上海摩尔口腔医院"]},"kimi":{"b":2,"r":9,"delta":-7,"change":"keep","b_h":["上海市普陀区中心医院","上海宏康医院","综合性医院","拜博口腔","全国大型连锁口腔","尤旦口腔医院","同济大学附属口腔医院","上海口腔"],"r_h":["上海市普陀区中心医院","上海中医药大学附属普陀医院","普陀区老牌三级综合性医院","同济大学附属口腔医院","距普陀区中心医院","上海市第十人民医院口腔","三甲综合医院口腔","综合医院口腔"]},"union_base":true,"union_re":true},{"qid":"HK-19","query":"普陀区做隐形牙套和钢丝牙套矫正分别哪家好？两种差价大吗？","cat":"决策对比","deepseek":{"b":null,"r":3,"delta":null,"change":"new","b_h":["上海市普陀区眼病牙病防治所","同济大学附属同济医院","于倾向在公立专科医院","上海摩尔口腔医院","普陀区社区标准化口腔","根据一位北京大学口腔医院","同济医院"],"r_h":["上海市普陀区眼病牙病防治所","上海市同济医院","上海宏康医院","摩尔口腔","n下面几家医院","并有在三甲医院","上海交通大学医学院附属第九人民医院","上海摩尔口腔医院"]},"wenxin":{"b":4,"r":null,"delta":null,"change":"lost","b_h":["上海维乐口腔","上海摩尔口腔医院","上海伊尔意口腔门诊部","上海宏康医院","上海市同济医院口腔","上海市普陀区中心医院口腔","伊尔意口腔","咨询医院"],"r_h":["多家口腔","普陀区伊尔意口腔","伊尔意口腔","属于牙哈哈口腔"]},"kimi":{"b":null,"r":null,"delta":null,"change":"none","b_h":["同济大学附属口腔医院","上海市普陀区中心医院口腔","上海市第十人民医院口腔","拜博口腔","摩尔齿科","尤旦口腔","美奥口腔","中华口腔"],"r_h":["上海市普陀区中心医院","普陀区老牌公立三级综合性医院","同济大学附属口腔医院","上海市第十人民医院","且公立医院","多家连锁口腔","这两家医院","但公立医院"]},"union_base":true,"union_re":true},{"qid":"HK-20","query":"上海普陀区口腔医院的医生资质怎么看？哪几家的医生团队比较强？","cat":"决策对比","deepseek":{"b":null,"r":6,"delta":null,"change":"new","b_h":["下面几家医院","上海市普陀区眼病牙病防治所","同济大学附属同济医院","副主任医师专攻口腔","希望在三甲医院","上海摩尔口腔医院","摩尔齿科","社区医院"],"r_h":["普陀区几家主要口腔医院","上海市普陀区眼病牙病防治所","上海市同济医院","作为公立三甲医院","私立口腔医院","上海宏康医院","曾就职于三甲医院","上海摩尔口腔医院"]},"wenxin":{"b":null,"r":10,"delta":null,"change":"new","b_h":["查看上海普陀区口腔医院","要查看上海普陀区口腔医院","上海XX医院","上海普陀区口腔医院","上海尤旦口腔医院","上海摩尔口腔医院","上海天佑医院口腔","作为医院"],"r_h":["上海中医药大学附属普陀医院口腔","公立医院口腔","普陀区公立口腔","这个副高密度在全区综合医院","同济大学附属同济医院口腔","普陀区口腔","涵盖口腔","普陀区唯一三甲口腔"]},"kimi":{"b":null,"r":null,"delta":null,"change":"none","b_h":["上海普陀区选择口腔","不要仅凭医院","美容牙科","部分医院","尤其来自四川大学华西口腔","北京大学口腔","同济大学口腔","武汉大学口腔"],"r_h":["上海普陀区选择口腔","不要只看医院","中华口腔","担任省级以上口腔","三甲综合医院口腔","区属牙病防治所","同济大学附属口腔医院","上海市口腔医院"]},"union_base":false,"union_re":true},{"qid":"HK-21","query":"普陀区种植牙用进口还是国产的好？哪家医院品牌选择多？","cat":"决策对比","deepseek":{"b":null,"r":9,"delta":null,"change":"new","b_h":["上海市普陀区眼病牙病防治所","上海摩尔口腔医院","作为大型专科医院","上海沐良诚口腔门诊部","优先考虑大医院"],"r_h":["普陀区医院","以下医院","上海市同济医院","普陀区中心医院","普陀区人民医院","普陀区利群医院","上海市普陀区眼病牙病防治所","上海摩尔口腔医院"]},"wenxin":{"b":8,"r":5,"delta":3,"change":"keep","b_h":["部分基层医院","普陀区种植牙医院","以下医院","上海摩尔口腔","上海拜博口腔","上海维乐口腔","同济大学附属天佑医院口腔","上海宏康医院"],"r_h":["牙哈哈口腔","上海维乐口腔","上海摩尔口腔医院","上海拜博口腔","上海宏康医院","摩尔口腔"]},"kimi":{"b":3,"r":null,"delta":null,"change":"lost","b_h":["上海市普陀区中心医院","民营综合医院口腔","上海宏康医院","该医院口腔","全国连锁口腔","泰康拜博口腔","维乐口腔","瑞尔齿科"],"r_h":[]},"union_base":true,"union_re":true},{"qid":"HK-22","query":"想在普陀区做牙齿美白，冷光美白和瓷贴面选哪个？哪家做得好？","cat":"决策对比","deepseek":{"b":5,"r":null,"delta":null,"change":"lost","b_h":["上海市普陀区眼病牙病防治所","上海摩尔口腔医院","下面这两家医院","上海伊尔意口腔门诊部","上海宏康医院","上海佳技口腔门诊部"],"r_h":["上海市普陀区眼病牙病防治所","上海摩尔口腔医院","普陀区医院","择公立医院"]},"wenxin":{"b":null,"r":5,"delta":null,"change":"new","b_h":["上海市普陀区眼病牙病防治所","上海维乐美达口腔门诊部","同济大学附属天佑医院口腔","上海宏博口腔门诊部","斥资引进口腔"],"r_h":["上海维乐口腔","术前会做全面口腔","同济大学附属天佑医院口腔","想在综合医院","上海宏康医院","想要综合医院","先做全面口腔","牙哈哈口腔"]},"kimi":{"b":8,"r":7,"delta":1,"change":"keep","b_h":["上海市同济医院口腔","同济大学附属大型综合性三甲医院","希望先全面评估口腔","倾向公立医院","上海市普陀区中心医院口腔","覆盖常见口腔","相比三甲医院","上海宏康医院"],"r_h":["上海市普陀区中心医院","上海市普陀区人民医院","同济大学附属口腔医院","上海市口腔医院","果普陀区公立医院","泰康拜博口腔","上海宏康医院","做一个全面口腔"]},"union_base":true,"union_re":true},{"qid":"HK-23","query":"上海普陀区哪家口腔医院设备比较先进？有数字化种植的吗？","cat":"决策对比","deepseek":{"b":null,"r":null,"delta":null,"change":"none","b_h":["上海市普陀区眼病牙病防治所","上海摩尔口腔医院","共同开展口腔","普陀区利群医院","而上海摩尔口腔医院"],"r_h":["上海市普陀区眼病牙病防治所","上海摩尔口腔医院","主要医院","但作为大型连锁专科医院","其他医院","目前有牙科","其他公立综合医院","普陀区中心医院"]},"wenxin":{"b":null,"r":7,"delta":null,"change":"new","b_h":["上海普陀区有多家口腔医院","上海华尔康中博普众口腔医院","上海维乐口腔","用户普遍反映医院","能够满足各种复杂口腔","用户普遍认为医院","都对医院"],"r_h":["上海普陀区多家口腔","上海市普陀区中心医院口腔","上海维乐口腔","作为全国二级口腔","上海伊尔意口腔","上海摩尔口腔医院","上海宏康医院"]},"kimi":{"b":5,"r":8,"delta":-3,"change":"keep","b_h":["上海普陀区在口腔","上海市同济医院口腔","上海市普陀区中心医院","配有口腔","上海宏康医院","部分综合医院口腔","拜博口腔","作为全国大型连锁口腔"],"r_h":["几家口腔","同济大学附属口腔医院","上海市口腔","普陀区公立综合性医院","上海市普陀区中心医院","三级综合性医院","普陀区内民营口腔","上海宏康医院"]},"union_base":true,"union_re":true},{"qid":"HK-24","query":"普陀区老年人镶牙去哪好？活动假牙和固定种植该怎么选？","cat":"决策对比","deepseek":{"b":null,"r":null,"delta":null,"change":"none","b_h":["上海市普陀区眼病牙病防治所","社区标准化口腔","作为普陀区首家市级标准化口腔","上海交通大学医学院附属第九人民医院","其标准化口腔"],"r_h":["上海市普陀区眼病牙病防治所","上海摩尔口腔医院","这类社区诊所","市级标准化口腔","上海交通大学医学院附属第九人民医院","做个口腔"]},"wenxin":{"b":null,"r":1,"delta":null,"change":"new","b_h":["上海鼎植口腔","上海美冠塔口腔","上海夕阳红口腔","上海维乐口腔","智能化口腔","上海同济大学附属天佑口腔","优先评估口腔","确认医院"],"r_h":["上海宏康医院","牙哈哈口腔","不用反复跑医院","上海市普陀区人民医院口腔","每半年回医院"]},"kimi":{"b":7,"r":7,"delta":0,"change":"keep","b_h":["上海市同济医院口腔","普陀区首选三甲综合医院","上海市普陀区中心医院口腔","同济大学附属口腔医院","上海市三大公立口腔","老年口腔","上海宏康医院","拜博口腔"],"r_h":["上海市普陀区中心医院口腔","普陀区老牌公立二甲医院","同济大学附属口腔医院","上海市属三级口腔专科医院","上海市第十人民医院口腔","三甲综合性医院口腔","上海宏康医院","相比三甲医院"]},"union_base":true,"union_re":true},{"qid":"HK-25","query":"上海普陀区看牙可以走医保的医院有哪些？种植牙能不能报销？","cat":"决策对比","deepseek":{"b":7,"r":9,"delta":-2,"change":"keep","b_h":["上海市同济医院","普陀区中心医院","普陀区人民医院","普陀区利群医院","上海市普陀区眼病牙病防治所","上海摩尔口腔医院","上海宏康医院","上海天佑医院"],"r_h":["很多正规口腔医院","上海市同济医院","普陀区中心医院","公立二甲综合医院","普陀区人民医院","普陀区利群医院","上海市普陀区眼病牙病防治所","上海摩尔口腔医院"]},"wenxin":{"b":1,"r":1,"delta":0,"change":"keep","b_h":["上海宏康医院","上海摩尔口腔医院","上海中医药大学附属普陀医院口腔","择种植牙医院","关注医院","摩尔口腔"],"r_h":["上海宏康医院","上海市普陀区中心医院口腔","所有常规口腔","同济大学附属同济医院口腔","普陀区口腔","复杂口腔","上海中博普众口腔","上海交通大学医学院附属第九人民医院"]},"kimi":{"b":11,"r":null,"delta":null,"change":"lost","b_h":["上海公立医院","这类医院","上海市同济医院","三级甲等综合性医院","上海市普陀区中心医院","三级综合性医院","常规口腔","上海市普陀区人民医院"],"r_h":["上海市同济医院","上海市普陀区中心医院","三级乙等综合性医院","上海市普陀区人民医院","基础口腔","但民营口腔诊所","需该医院","今日口腔"]},"union_base":true,"union_re":true},{"qid":"HK-26","query":"普陀区周边几家连锁口腔和本地口腔医院比，去哪种更好？","cat":"决策对比","deepseek":{"b":null,"r":null,"delta":null,"change":"none","b_h":["以上海摩尔口腔","以普陀区眼病牙病防治所","上海摩尔口腔","用户分享在摩尔口腔","作为公立医院","上海交通大学医学院附属第九人民医院","上海市普陀区眼病牙病防治所","上海华尔康星杰口腔医院"],"r_h":["上海市普陀区眼病牙病防治所","上海摩尔口腔医院","合作成立了附属口腔","老年口腔","伊尔意口腔","中瑞迈维口腔","星杰口腔医院","这类本地公立医院"]},"wenxin":{"b":8,"r":11,"delta":-3,"change":"keep","b_h":["普陀区选择口腔医院","维乐口腔","摩尔口腔","拜博口腔","朗朗口腔","齐美口腔","以家庭为单位建立口腔","上海宏康医院"],"r_h":["教学医院","部分区级医院","普陀区连锁口腔","拜博口腔","维乐口腔","星诺口腔","牙哈哈口腔","普陀区本地医院"]},"kimi":{"b":null,"r":null,"delta":null,"change":"none","b_h":["综合医院口腔","顶级医院","但部分综合医院口腔","权威口腔","同济大学附属口腔医院","上海市第十人民医院口腔","三甲综合医院口腔","复旦大学附属口腔医院"],"r_h":["同济大学附属口腔医院","区中心医院","上海老牌三级口腔专科医院","上海口腔","上海市第十人民医院口腔","普陀区中心医院口腔","上海市口腔医院","泰康拜博口腔"]},"union_base":true,"union_re":true},{"qid":"HK-27","query":"上海普陀区有糖尿病能做种植牙的医院吗？听说有的诊所不敢接","cat":"决策对比","deepseek":{"b":null,"r":null,"delta":null,"change":"none","b_h":["上海市普陀区眼病牙病防治所","上海摩尔口腔医院","果公立医院","同济大学附属同济医院","上述医院"],"r_h":["上海交通大学医学院附属第九人民医院","下面几家公立医院","上海市同济医院","上海市普陀区眼病牙病防治所","上海摩尔口腔医院","你更倾向于先带父母去同济医院"]},"wenxin":{"b":3,"r":1,"delta":2,"change":"keep","b_h":["上海普陀区有多家口腔医院","上海拜博口腔","上海宏康医院","上海维乐口腔","上海摩尔口腔","具体医院","医院口腔","隶属于美维口腔"],"r_h":["上海宏康医院","上海天佑医院口腔","公办医院","上海维乐口腔","上海尤旦口腔","很多小诊所","天佑这类综合医院"]},"kimi":{"b":10,"r":null,"delta":null,"change":"lost","b_h":["普通口腔诊所","普通诊所","上海市普陀区中心医院","普陀区属三级综合性医院","作为综合医院","上海市第十人民医院","作为大型三甲综合医院","同济大学附属口腔医院"],"r_h":["而部分小型诊所","这类医院","上海市普陀区中心医院","同济大学附属普陀人民医院","同济大学附属口腔医院","上海市老牌公立口腔专科医院","专科医院虽为口腔","上海市第十人民医院口腔中心"]},"union_base":true,"union_re":true},{"qid":"HK-28","query":"普陀区做牙齿矫正，哪家医院能看到矫正前后模拟效果？","cat":"决策对比","deepseek":{"b":null,"r":null,"delta":null,"change":"none","b_h":["上海市普陀区眼病牙病防治所","上海摩尔口腔医院","我把这两家医院","首选普陀区眼病牙病防治所","者更看重私立医院"],"r_h":["上海市普陀区眼病牙病防治所","获取你口腔","开展医院","普陀区还有一些其他民营口腔","上海伊尔意口腔门诊部","上海维乐美达口腔门诊部","上海摩尔口腔医院","除了普陀区眼病牙病防治所"]},"wenxin":{"b":null,"r":6,"delta":null,"change":"new","b_h":["上海市普陀区眼病牙病防治所","上海市普陀区中心医院口腔","通过口腔","科室掌握了牙科","隐形正畸等多项国际口腔"],"r_h":["上海市普陀区眼病牙病防治所","上海维乐口腔","上海天佑医院口腔","公办医院","上海星诺口腔","上海宏康医院"]},"kimi":{"b":null,"r":4,"delta":null,"change":"new","b_h":["上海市同济医院","同济大学附属同济医院","综合性医院","作为大学附属医院"],"r_h":["上海市普陀区中心医院","普陀区属三级综合性医院","同济大学附属口腔医院","上海宏康医院","泰康拜博口腔","维乐口腔","瑞尔齿科","舟山市普陀医院"]},"union_base":false,"union_re":true},{"qid":"HK-29","query":"上海普陀区种植牙各家医院都用什么品牌？瑞士和韩国的差价多少？","cat":"决策对比","deepseek":{"b":null,"r":8,"delta":null,"change":"new","b_h":["关于普陀区各家医院","只有部分医院","普陀区部分医院","上海市普陀区眼病牙病防治所","瑞士ITI口腔","上海摩尔口腔医院","普陀区其他医院","而且部分医院"],"r_h":["目前普陀区官方并没有统一公示各家医院","只确认了哪些医院","上海市同济医院","普陀区中心医院","普陀区人民医院","上海市普陀区眼病牙病防治所","上海摩尔口腔医院","上海宏康医院"]},"wenxin":{"b":10,"r":5,"delta":5,"change":"keep","b_h":["上海普陀区种植牙医院","上海普陀区多家口腔医院","以下为部分医院","上海维乐口腔","上海尤旦口腔","上海伊尔意口腔","正睿口腔","上海摩尔口腔"],"r_h":["普陀区主流口腔","普陀区各家医院","牙哈哈口腔","上海维乐口腔","上海宏康医院","上海天佑医院口腔","上海摩尔口腔医院","同济大学附属同济医院口腔"]},"kimi":{"b":null,"r":5,"delta":null,"change":"new","b_h":["私立连锁口腔","普陀区主要口腔","上海市同济医院口腔","作为三甲医院","上海市普陀区中心医院口腔","分布着多家连锁口腔","泰康拜博口腔","摩尔齿科"],"r_h":["上海市同济医院","普陀区中心医院","区域性综合医院","普陀区人民医院","上海宏康医院","综合性医院","泰康拜博口腔","摩尔齿科"]},"union_base":true,"union_re":true},{"qid":"HK-30","query":"普陀区有没有做种植牙可以分期付款的口腔医院？","cat":"决策对比","deepseek":{"b":null,"r":null,"delta":null,"change":"none","b_h":["大多数医院","上海摩尔口腔医院","这类大型民营口腔专科医院"],"r_h":["直接给医院","上海摩尔口腔医院","没有医院"]},"wenxin":{"b":3,"r":4,"delta":-1,"change":"keep","b_h":["舟山维瑅口腔","上海摩尔口腔医院","上海宏康医院","上海维乐口腔"],"r_h":["普陀区有多家正规口腔","牙哈哈口腔","上海维乐口腔","上海宏康医院","上海普陀区口腔医院","头部连锁口腔","公立综合医院口腔","同济医院"]},"kimi":{"b":4,"r":null,"delta":null,"change":"lost","b_h":["上海市同济医院口腔","不支持医院","普陀区中心医院口腔","上海宏康医院","全国性连锁口腔","泰康拜博口腔","维乐口腔","摩尔齿科"],"r_h":["主要集中在民营口腔","同济大学附属口腔医院","上海市口腔","上海市普陀区中心医院","公立三乙综合医院","普陀区本地老牌医院","泰康拜博口腔","拜博口腔"]},"union_base":true,"union_re":true},{"qid":"HK-31","query":"上海普陀区口腔医院的消毒流程靠谱吗？怎么判断一家诊所卫生达标？","cat":"决策对比","deepseek":{"b":null,"r":null,"delta":null,"change":"none","b_h":["关于普陀区口腔医院","上海市同济医院","普陀区中心医院","上海市普陀区眼病牙病防治所","等主要公立医院","康莉美伦口腔门诊部","玉植口腔门诊部","杨燕芬口腔诊所"],"r_h":["标准化口腔","所有接触你口腔","乃至牙科","个别诊所","也已建成标准化口腔"]},"wenxin":{"b":null,"r":null,"delta":null,"change":"none","b_h":["上海普陀区正规口腔医院","判断诊所"],"r_h":["上海普陀区口腔医院","普陀区合规口腔","同济大学附属同济医院口腔","院感管理由医院","上海维乐口腔","全国二级口腔","上海伊尔意口腔","上海摩尔口腔医院"]},"kimi":{"b":null,"r":null,"delta":null,"change":"none","b_h":["上海市普陀区眼病牙病防治所","同济大学附属口腔医院"],"r_h":["关于上海普陀区口腔","普陀区公立口腔","上海市普陀区眼病牙病防治所","不符合口腔"]},"union_base":false,"union_re":false},{"qid":"HK-32","query":"普陀区高血压老人拔牙去哪安全？需要心电监护的那种","cat":"决策对比","deepseek":{"b":null,"r":null,"delta":null,"change":"none","b_h":["上海市普陀区利群医院","利群医院","者直接在口腔","同济大学附属口腔医院","上海市东方医院","上海交通大学医学院附属第九人民医院"],"r_h":["上海市同济医院","上海市普陀区眼病牙病防治所","n我把这几家医院","普陀区利群医院","果利群医院","明医院具备高风险口腔","普陀区中医医院","同济大学附属口腔医院"]},"wenxin":{"b":null,"r":null,"delta":null,"change":"none","b_h":["上海市普陀区利群医院","利群医院","上海市第八人民医院口腔","心内科医生进驻口腔","由资深口腔","复旦大学附属中山医院","提高口腔"],"r_h":["上海市普陀区中心医院口腔","区域公立综合医院","同济大学附属同济医院口腔","上海维乐口腔"]},"kimi":{"b":null,"r":null,"delta":null,"change":"none","b_h":["这类医院不仅有口腔","上海市同济医院","同济大学附属同济医院","三级甲等综合性医院","上海市普陀区中心医院","上海中医药大学附属普陀医院","三级综合性医院","可提前致电医院口腔"],"r_h":["普陀区本身优质公立口腔","同济大学附属口腔医院","老年口腔","上海市第十人民医院","三甲综合医院口腔","复旦大学附属华东医院","心电监护下口腔","复旦大学附属华山医院"]},"union_base":false,"union_re":false},{"qid":"HK-33","query":"上海普陀区哪家口腔医院有独立诊室？不想在开放区看牙","cat":"决策对比","deepseek":{"b":null,"r":5,"delta":null,"change":"new","b_h":["上海摩尔口腔医院","泓口腔门诊部","上海鸿宁口腔门诊部","上海丁晓东口腔诊所","上海泰康拜博星尔口腔门诊部","第三方口腔","直接向医院","上海市普陀区眼病牙病防治所"],"r_h":["几家医院","上海泰康拜博星尔口腔门诊部","泓口腔门诊部","上海余曦口腔诊所","上海宏康医院","整体医院","天使口腔","但其官网信息显示诊所"]},"wenxin":{"b":null,"r":9,"delta":null,"change":"new","b_h":["若您希望在独立诊室中接受口腔","上海普陀区有多家口腔医院","上海天佑医院口腔","上海中博普众口腔医院","普陀同济口腔医院","同济大学附属口腔医院"],"r_h":["维乐口腔","摩尔口腔医院","华尔康口腔医院","拜博口腔","上海市普陀区眼病牙病防治所","上级医院","综合医院口腔","同济大学附属同济医院口腔"]},"kimi":{"b":10,"r":4,"delta":6,"change":"keep","b_h":["中高端私立口腔","私立口腔","这类诊所","瑞尔齿科","我格广场诊所","摩尔齿科","拜博口腔","但部分三甲医院"],"r_h":["上海市同济医院口腔","上海市普陀区中心医院","三级乙等综合性医院","上海宏康医院","希望获得接近私立诊所","私立口腔","中高端私立口腔","拜博口腔"]},"union_base":true,"union_re":true},{"qid":"HK-34","query":"普陀区做全瓷冠和烤瓷冠价格差多少？哪家医院的修复科比较好？","cat":"决策对比","deepseek":{"b":null,"r":null,"delta":null,"change":"none","b_h":["上海市普陀区眼病牙病防治所","普陀区各医院","上海摩尔口腔医院","上海华尔康星杰口腔医院"],"r_h":["上海市普陀区眼病牙病防治所","上海摩尔口腔医院","普陀区口腔"]},"wenxin":{"b":5,"r":6,"delta":-1,"change":"keep","b_h":["上海市同济医院","上海维乐口腔","普陀区延长西路门诊部","私立连锁口腔","上海宏康口腔门诊部","上海宏康医院","专业口腔","优先选择三甲医院"],"r_h":["上海市同济医院","上海市普陀区中心医院","上海维乐口腔","上海摩尔普陀口腔医院","上海天佑医院口腔","上海宏康医院","综合医院口腔","标准化口腔"]},"kimi":{"b":null,"r":null,"delta":null,"change":"none","b_h":["部分公立医院","上海市同济医院","同济大学附属同济医院","综合性医院","上海市普陀区中心医院","相比三甲专科医院","同济大学附属口腔医院","可选择公立医院"],"r_h":["具体以医院","上海市同济医院","三级甲等综合性医院","作为大学附属医院","上海市普陀区中心医院","三级综合性医院","上海市普陀区人民医院","二级甲等综合性医院"]},"union_base":true,"union_re":true},{"qid":"HK-35","query":"上海普陀区哪个口腔医院的收费标准比较透明？怕中途加价","cat":"决策对比","deepseek":{"b":null,"r":null,"delta":null,"change":"none","b_h":["优先选择公立医院","上海市普陀区眼病牙病防治所","市级医院","上海第十人民医院等市级医院","上海华尔康中博普众口腔医院","上海摩尔口腔医院"],"r_h":["普陀区有两家民营医院","依然有些诊所","上海摩尔口腔医院","上海华尔康中博口腔医院","上海市普陀区眼病牙病防治所","上海星诺口腔门诊部","上海交通大学医学院附属第九人民医院","目前上海市公立医院"]},"wenxin":{"b":null,"r":2,"delta":null,"change":"new","b_h":["上海市普陀区中心医院口腔","作为公立三级医院","上海摩尔口腔医院","上海维乐口腔","上海泰康拜博口腔","民营机构如摩尔口腔","要求医院","通过上海市医疗保障局官网查询口腔"],"r_h":["牙哈哈口腔","上海宏康医院","上海市普陀区眼病牙病防治所","大堂公示栏同步上线所有口腔","上海维乐口腔"]},"kimi":{"b":6,"r":10,"delta":-4,"change":"keep","b_h":["上海市普陀区中心医院","二级甲等综合性公立医院","同济大学附属口腔医院","上海市唯一一所三级甲等口腔专科公立医院","作为教学医院","上海宏康医院","私立医院","大型全国连锁口腔"],"r_h":["三乙综合医院口腔","上海市同济医院口腔","上海市普陀区中心医院","上海中医药大学附属普陀医院","作为区属公立医院","常规口腔","上海市普陀区人民医院","二甲医院"]},"union_base":true,"union_re":true},{"qid":"HK-36","query":"普陀区做正畸的话选连锁品牌统一标准好，还是选本地老口腔医院经验丰富好？","cat":"决策对比","deepseek":{"b":null,"r":null,"delta":null,"change":"none","b_h":["上海市普陀区眼病牙病防治所","上海摩尔口腔","摩尔齿科","果更看重公立医院","上海摩尔口腔医院","华尔康中博普众口腔医院","很多有公立医院"],"r_h":["而本地老牌医院","摩尔口腔","伊尔意口腔","上海市同济医院","普陀区中心医院","长期在医院","上海摩尔口腔医院"]},"wenxin":{"b":4,"r":null,"delta":null,"change":"lost","b_h":["上海维乐口腔","上海拜博口腔","上海朗朗口腔","上海宏康医院","上海天佑医院口腔","上海正睿口腔","普众口腔","长期口腔"],"r_h":["优先选维乐口腔","优先选伊尔意口腔","直接选同济医院口腔"]},"kimi":{"b":null,"r":null,"delta":null,"change":"none","b_h":["老牌综合医院口腔","同济大学附属口腔医院","上海市普陀区中心医院","普陀区老牌三乙综合医院","上海市普陀区眼病牙病防治所","泰康拜博口腔","部分门店有原公立医院","摩尔齿科"],"r_h":["上海市普陀区中心医院口腔","普陀区老牌三级乙等综合性医院","同济大学附属口腔医院","上海三大口腔专科公立医院","上海市第十人民医院口腔","私立口腔","拜博口腔","瑞尔齿科"]},"union_base":true,"union_re":false},{"qid":"HK-37","query":"上海普陀区口腔医院排名，口碑最好的是哪几家？","cat":"信任验证","deepseek":{"b":null,"r":null,"delta":null,"change":"none","b_h":["普陀区口腔医院","上海市普陀区眼病牙病防治所","上海华尔康中博普众口腔医院","这两家医院"],"r_h":["关于普陀区口腔医院","几家医院","上海市同济医院","上海市普陀区眼病牙病防治所","上海摩尔口腔医院","上海伊尔意口腔","不同医院"]},"wenxin":{"b":2,"r":9,"delta":-7,"change":"keep","b_h":["以下几家口腔医院","上海宏康医院","上海交通大学医学院附属第九人民医院","留日口腔","免费口腔","上海维乐口腔","上海伊尔意口腔门诊部","上海摩尔口腔医院"],"r_h":["普陀区口腔医院","上海维乐·美维馨口腔门诊部","上海伊尔意口腔门诊部","正睿齿科","上海摩尔口腔医院","上海齐恒口腔门诊部","上海博雅口腔门诊部","上海众植口腔门诊部"]},"kimi":{"b":null,"r":null,"delta":null,"change":"none","b_h":["同济大学附属口腔医院","复旦版中国医院","普陀区属公立综合医院口腔","上海市普陀区中心医院","作为区属龙头医院","上海市普陀区人民医院","原上海纺织第一医院","二级甲等综合性医院"],"r_h":["普陀区口腔","公立综合医院口腔","上海市同济医院口腔","同济大学附属三级甲等综合性医院"]},"union_base":true,"union_re":true},{"qid":"HK-38","query":"普陀区种植牙做得最好的医院推荐一下，患者评价高的有哪些？","cat":"信任验证","deepseek":{"b":null,"r":null,"delta":null,"change":"none","b_h":["上海华尔康中博普众口腔医院","上海市普陀区眼病牙病防治所","两家医院","瑞士ITI口腔","处理复杂口腔","普陀区内还有其他医院","上海摩尔口腔医院","上海中医药大学附属普陀医院"],"r_h":["上海市普陀区眼病牙病防治所","上海华尔康中博普众口腔医院","上海九院口腔","上海交通大学医学院附属第九人民医院","作为九院口腔","其他医院"]},"wenxin":{"b":6,"r":3,"delta":3,"change":"keep","b_h":["中瑞迈维口腔","全国连锁口腔","上海维乐口腔","上海拜博口腔","可接诊疑难口腔","上海宏康医院","上海天佑医院口腔","可提取细致口腔"],"r_h":["上海维乐口腔","普陀区口腔","上海宏康医院","牙哈哈口腔","原正睿齿科","上海拜博口腔","上海天佑医院口腔","公办医院"]},"kimi":{"b":null,"r":null,"delta":null,"change":"none","b_h":["可选择大型连锁口腔","上海市同济医院","同济大学附属三级甲等综合性医院","作为公立医院","上海市普陀区中心医院","普陀区属二级甲等综合性医院","也有多家大型连锁口腔","泰康拜博口腔"],"r_h":["上海市同济医院口腔","三级甲等综合性医院","上海市普陀区中心医院口腔","二级甲等综合性医院","上海市普陀区人民医院口腔","二级综合性医院","原纺一医院","同济大学附属口腔医院"]},"union_base":true,"union_re":true},{"qid":"HK-39","query":"上海普陀区正畸效果好的口腔医院有哪些？想找矫正案例多的","cat":"信任验证","deepseek":{"b":null,"r":2,"delta":null,"change":"new","b_h":["两家医院","上海市普陀区眼病牙病防治所","上海交大医学院口腔","上海摩尔口腔医院","摩尔口腔","同济大学附属口腔医院","果你很看重公立医院"],"r_h":["上海伊尔意口腔","上海宏康医院","上海市同济医院","作为公立医院","上海汪伯祥口腔诊所","同济大学口腔","曾就职于上海交通大学附属第一人民医院","上海市普陀区眼病牙病防治所"]},"wenxin":{"b":null,"r":6,"delta":null,"change":"new","b_h":["上海摩尔口腔医院","上海维乐口腔","美学矫正中心等多个专科口腔","上海市普陀区中心医院口腔","上海市同济医院口腔","已发展成为由口腔","上海市儿童医院口腔","但上海市儿童医院口腔"],"r_h":["上海维乐口腔","普陀区口腔","上海伊尔意口腔","正睿齿科","上海同济大学附属同济医院口腔","上海宏康医院","综合医院口腔","上海天佑医院口腔"]},"kimi":{"b":null,"r":11,"delta":null,"change":"new","b_h":[],"r_h":["同济大学附属口腔医院","上海市三大公立口腔专科医院","中华口腔","普陀区属公立综合医院","上海市普陀区中心医院口腔","三级综合性医院","上海市普陀区人民医院","纺一医院"]},"union_base":false,"union_re":true},{"qid":"HK-40","query":"普陀区老年人做种植牙去哪家医院最放心？要安全有保障的","cat":"信任验证","deepseek":{"b":null,"r":null,"delta":null,"change":"none","b_h":["为老年人选择种植牙医院","上海市普陀区眼病牙病防治所","同济大学附属同济医院","上海摩尔口腔医院","我把这几家医院","聚焦老年口腔","老年口腔","专门研究老年人口腔"],"r_h":["为老人选择种植牙医院","上海市普陀区眼病牙病防治所","上海摩尔口腔医院","老年口腔","上海大学医学院老年口腔","上海静安区民营口腔诊所"]},"wenxin":{"b":3,"r":1,"delta":2,"change":"keep","b_h":["可优先考虑以下几家医院","上海市普陀区中心医院口腔","上海宏康医院","上海拜博口腔","认为医院","上海茂菊口腔"],"r_h":["上海宏康医院","非单纯牙科诊所","同济大学附属同济医院口腔","上海天佑医院口腔","公办医院口腔","上海维乐口腔","上海正睿口腔","定期聘公办医院"]},"kimi":{"b":null,"r":null,"delta":null,"change":"none","b_h":["上海市普陀区中心医院","三级综合性医院","这类医院","同济大学附属口腔医院","上海市老牌公立口腔专科医院","老年口腔","上海市第十人民医院","三级甲等综合性医院"],"r_h":["安全性远高于普通门诊部","同济大学附属口腔医院","上海口腔","老年口腔","作为专科医院","上海市普陀区中心医院","二级甲等综合性医院","本区老牌综合医院"]},"union_base":true,"union_re":true},{"qid":"HK-41","query":"上海普陀区口腔医院哪家服务态度最好？医生比较耐心的","cat":"信任验证","deepseek":{"b":null,"r":2,"delta":null,"change":"new","b_h":["上海市普陀区眼病牙病防治所","上海华尔康中博普众口腔医院","上海摩尔口腔医院","星诺口腔门诊部"],"r_h":["普陀区有几家医院","上海宏康医院","上海市普陀区眼病牙病防治所","作为公立医院","上海汪伯祥口腔诊所","上海摩尔口腔医院","上海星诺口腔门诊部","后者作为公立医院"]},"wenxin":{"b":null,"r":6,"delta":null,"change":"new","b_h":["以下几家口腔医院","上海维乐口腔","上海伊尔意口腔门诊部","上海天佑医院口腔","上海拜博口腔","作为大型连锁齿科"],"r_h":["上海维乐口腔","普陀区口腔","上海伊尔意口腔","正睿齿科","上海齐恒口腔门诊部","上海宏康医院","上海朗朗口腔","伯祥口腔"]},"kimi":{"b":null,"r":null,"delta":null,"change":"none","b_h":[],"r_h":["同济大学附属同济医院口腔","三级甲等综合性医院","作为大学附属医院","上海市普陀区中心医院","三级综合性医院","上海市普陀区人民医院","二级甲等综合性医院","相比三甲医院"]},"union_base":false,"union_re":true},{"qid":"HK-42","query":"普陀区哪家口腔医院做烤瓷牙和全瓷冠口碑好？想找手艺精的","cat":"信任验证","deepseek":{"b":null,"r":2,"delta":null,"change":"new","b_h":["两家医院","上海市普陀区眼病牙病防治所","上海华尔康中博普众口腔医院","上海星诺口腔门诊部","果你想了解这两家医院"],"r_h":["上海市普陀区眼病牙病防治所","上海宏康医院","普陀区口腔","所在医院","上海交通大学医学院附属第九人民医院"]},"wenxin":{"b":2,"r":8,"delta":-6,"change":"keep","b_h":["上海普陀区中心医院口腔","上海宏康医院","上海西郊众植口腔","上海正睿口腔","伊尔意口腔"],"r_h":["上海市普陀区中心医院口腔","现代化口腔","普陀区公立医院","上海维乐口腔","上海伊尔意口腔","正睿齿科","上海市普陀区眼病牙病防治所","上海宏康医院"]},"kimi":{"b":6,"r":12,"delta":-6,"change":"keep","b_h":["上海市普陀区中心医院","三级乙等综合性医院","上海美奥口腔门诊部","全国连锁口腔","泰康拜博口腔","上海宏康医院","同济大学附属口腔医院","具有三甲医院口腔"],"r_h":["上海市同济医院","同济大学附属同济医院","普陀区老牌三甲综合性医院","下设口腔","上海市普陀区中心医院口腔","上海市普陀区人民医院口腔","口腔科虽规模不如同济医院","偏好社区型公立医院"]},"union_base":true,"union_re":true},{"qid":"HK-43","query":"上海普陀区看牙收费比较实在的医院有哪些？不想被宰","cat":"信任验证","deepseek":{"b":null,"r":null,"delta":null,"change":"none","b_h":["上海市普陀区眼病牙病防治所","上海华尔康中博普众口腔医院","公立二甲专科医院","曾有用户在民营口腔医院"],"r_h":["上海华尔康中博口腔医院","上海摩尔口腔医院","除了选对医院","两家医院","参考公立医院","上海交通大学医学院附属第九人民医院","我再帮你对比下这两家医院"]},"wenxin":{"b":3,"r":7,"delta":-4,"change":"keep","b_h":["中瑞迈维口腔","普陀星杰口腔医院","上海宏康医院","作为综合医院","上海维乐口腔","上海中博普众口腔","上海市普陀区中心医院口腔","信任公立医院"],"r_h":["牙哈哈口腔","上海维乐口腔","上海尤旦口腔","上海伊尔意口腔","正睿齿科","公办医院","上海宏康医院","上海市普陀区中心医院"]},"kimi":{"b":null,"r":12,"delta":null,"change":"new","b_h":["综合医院口腔","上海市普陀区中心医院","三乙综合医院","普陀区老牌公立大医院","严格执行二级以上公立医院","上海市普陀区人民医院","原纺一医院","上海利群医院"],"r_h":["优先选择公立二甲以上医院","公立综合性医院","这类医院","上海市同济医院","作为公立医院","上海市普陀区中心医院","上海市普陀区人民医院","相比区中心医院"]},"union_base":true,"union_re":true},{"qid":"HK-44","query":"普陀区有没有开了十年以上的老牌口腔医院？经验丰富的推荐几家","cat":"信任验证","deepseek":{"b":null,"r":null,"delta":null,"change":"none","b_h":["上海市普陀区眼病牙病防治所","连续多年荣获上海市口腔","种植科等几乎所有口腔","两家口腔","上海汪伯祥口腔诊所","上海星诺口腔门诊部","上海华尔康中博普众口腔医院","上海摩尔口腔医院"],"r_h":["上海市普陀区眼病牙病防治所","普陀区中心医院口腔","上海星诺口腔","但其公开资料中没有像区眼病牙病防治所"]},"wenxin":{"b":1,"r":null,"delta":null,"change":"lost","b_h":["上海宏康医院","作为综合医院","上海天佑医院口腔","但依托综合医院","上海正睿口腔","伊尔意口腔","上海拜博口腔","上海朗朗口腔"],"r_h":["牙哈哈口腔","原伊尔意口腔","上海伯祥口腔诊所","朗朗口腔","上海信艺口腔门诊部","上海摩尔口腔医院","上海市普陀区眼病牙病防治所","上海市普陀区中心医院口腔"]},"kimi":{"b":6,"r":12,"delta":-6,"change":"keep","b_h":["上海中医药大学附属普陀医院","普陀区中心医院","老年口腔","上海市普陀区人民医院口腔","偏好公立医院","上海宏康医院","上海市普陀区眼病牙病防治所","其他公立综合医院"],"r_h":["公立综合医院口腔","上海市普陀区中心医院口腔","普陀区老牌三级综合性医院","涵盖口腔","上海市普陀区人民医院口腔","原纺一医院","二级甲等综合性医院","上海天佑医院口腔"]},"union_base":true,"union_re":true},{"qid":"HK-45","query":"上海普陀区口腔医院哪家医生团队最强？有没有知名专家坐诊的？","cat":"信任验证","deepseek":{"b":null,"r":null,"delta":null,"change":"none","b_h":["上海市普陀区眼病牙病防治所","同济大学附属同济医院","我把两家医院","作为普陀区老牌公立口腔","同济医院口腔","上海交通大学医学院附属第九人民医院","九院口腔","上海星诺口腔门诊部"],"r_h":["上海市同济医院","上海市普陀区眼病牙病防治所","n我把两家医院","普陀区口腔","上海口腔医学会口腔","尤其在口腔","善于解决口腔","上海交通大学医学院附属第九人民医院"]},"wenxin":{"b":null,"r":11,"delta":null,"change":"new","b_h":["上海普陀区口腔医院","上海中医药大学附属普陀医院口腔","同济大学附属天佑医院口腔","熟悉口腔","他们在口腔","普陀区市口腔"],"r_h":["牙哈哈口腔","原伊尔意口腔","原公立三甲口腔","上海交通大学医学院附属第九人民医院","普陀区民营口腔","上海中医药大学附属普陀医院口腔","普陀区公立口腔","上海天佑医院口腔"]},"kimi":{"b":null,"r":null,"delta":null,"change":"none","b_h":["区牙病防治所","三级综合医院口腔","普陀区主要公立口腔","上海市普陀区牙病防治所","上海市普陀区眼病牙病防治所","市级专科医院","上海市普陀区中心医院","华东师范大学附属普陀医院"],"r_h":["上海普陀区选择口腔","同济大学附属同济医院","三级甲等综合性医院","作为普陀区核心三甲医院","依托大学附属医院","作为教学医院","上海市同济医院","官方微信公众号查询当前口腔"]},"union_base":false,"union_re":true},{"qid":"HK-46","query":"普陀区做种植牙质保最长的是哪家医院？想找售后靠谱的","cat":"信任验证","deepseek":{"b":null,"r":null,"delta":null,"change":"none","b_h":["上海市普陀区眼病牙病防治所","虽然具体年限需向医院","这类医院","上海摩尔口腔医院","术后医院"],"r_h":["而非医院","你们医院","考察医院","了解医院","n关于普陀区医院","直接问医院"]},"wenxin":{"b":1,"r":5,"delta":-4,"change":"keep","b_h":["上海宏康医院","上海众植口腔","显示了医院","作为宏康医院","口腔科在口腔","体现了医院"],"r_h":["牙哈哈口腔","原伊尔意口腔","后续终身免费口腔","普陀区民营口腔","上海宏康医院","上海维乐口腔","上海市普陀区中心医院口腔","同济大学附属同济医院口腔"]},"kimi":{"b":null,"r":null,"delta":null,"change":"none","b_h":["同济大学附属口腔医院","上海市属公立三甲口腔专科医院","上海市普陀区中心医院","区内公立三级综合医院","基础牙科","遵循公立医院","泰康拜博口腔","抗风险能力在民营口腔"],"r_h":["上海市普陀区中心医院口腔","同济大学附属口腔医院","上海公立三甲口腔专科医院","摩尔齿科","拜博口腔","瑞泰口腔"]},"union_base":true,"union_re":true},{"qid":"HK-47","query":"上海普陀区民营口腔医院里口碑最好的是哪家？不想踩雷","cat":"信任验证","deepseek":{"b":null,"r":null,"delta":null,"change":"none","b_h":["普陀区民营口腔医院","上海华尔康中博普众口腔医院","上海摩尔口腔医院","摩尔口腔"],"r_h":["普陀区民营口腔医院","上海华尔康中博口腔医院","上海爱亚仕口腔门诊部","上海摩尔口腔医院","上海星诺口腔门诊部","n我把几家主要民营医院","独栋专科医院","查一下目标医院"]},"wenxin":{"b":null,"r":14,"delta":null,"change":"new","b_h":["上海维乐口腔","上海朗朗口腔"],"r_h":["上海维乐口腔","普陀区民营口腔","上海伊尔意口腔","公办医院","上海摩尔口腔医院","专科医院体制比普通诊所","上海中博普众口腔","上海交通大学医学院附属第九人民医院"]},"kimi":{"b":2,"r":6,"delta":-4,"change":"keep","b_h":["普陀区民营口腔","上海宏康医院","民营综合性医院","稳定性优于很多小诊所","作为综合医院","部分口腔","这在民营口腔","摩尔齿科"],"r_h":["以下几家民营口腔","上海美奥口腔","全国大型连锁专科口腔","上海交通大学医学院附属第九人民医院","同济大学附属口腔医院","上海宏康医院","属于本地老牌民营医院","部分口腔"]},"union_base":true,"union_re":true},{"qid":"HK-48","query":"普陀区哪家口腔医院技术设备最先进？有没有用到最新数字化技术的？","cat":"信任验证","deepseek":{"b":null,"r":null,"delta":null,"change":"none","b_h":["上海市普陀区眼病牙病防治所","普陀区利群医院","上海摩尔口腔医院","补齐了社区医院"],"r_h":["普陀区口腔","上海市普陀区眼病牙病防治所","n作为社区医院","引进了口腔","彻底解决了以往社区医院","上海交通大学医学院附属第九人民医院","上海摩尔口腔医院","作为民营专科医院"]},"wenxin":{"b":null,"r":5,"delta":null,"change":"new","b_h":["上海市普陀区眼病牙病防治所","精准恢复口腔","满足群众多样化口腔","上海中博普众口腔医院","传统综合医院口腔","同济医院","普陀区中心医院","拜博口腔"],"r_h":["上海市普陀区眼病牙病防治所","上海维乐口腔","牙哈哈口腔","上海市普陀区中心医院口腔","上海宏康医院","上海天佑医院口腔"]},"kimi":{"b":null,"r":null,"delta":null,"change":"none","b_h":["同济大学附属同济医院口腔","同济医院","上海市普陀区中心医院口腔","泰康拜博口腔","瑞尔齿科","部分诊所","上海尤旦口腔","摩尔口腔"],"r_h":["本区公立综合性医院","上海中医药大学附属普陀医院","上海市普陀区中心医院","三级综合性医院","上海市普陀区人民医院口腔","常规开展口腔","上海公立口腔","同济大学附属口腔医院"]},"union_base":false,"union_re":true},{"qid":"HK-49","query":"上海普陀区哪家综合医院的口腔科比较强？综合医院看牙有什么优势？","cat":"信任验证","deepseek":{"b":null,"r":null,"delta":null,"change":"none","b_h":["普陀区综合医院口腔","同济大学附属同济医院","副主任医师专攻口腔","普陀区中心医院","三级综合性医院","作为普陀区老牌大型综合医院","普陀区人民医院","二级甲等综合性医院"],"r_h":["综合医院里口腔","上海市同济医院","普陀区综合医院口腔","德国西诺德口腔","普陀区利群医院","但公开信息中关于其口腔","n综合医院口腔","能处理口腔"]},"wenxin":{"b":2,"r":null,"delta":null,"change":"lost","b_h":["普陀区综合医院口腔","上海宏康医院","上海市普陀区中心医院口腔","但可通过医院","其儿童口腔","上海市普陀区人民医院口腔","作为二级甲等综合医院","综合医院口腔"],"r_h":["综合医院口腔","普陀区综合医院口腔","同济大学附属同济医院口腔","普陀区口腔","涵盖口腔","上海中医药大学附属普陀医院口腔","职称结构在普陀区综合医院","上海市普陀区中心医院口腔"]},"kimi":{"b":null,"r":null,"delta":null,"change":"none","b_h":["而非口腔专科医院","上海市同济医院","同济大学附属同济医院","三级甲等综合性医院","作为大学附属医院","依托三甲综合医院","上海中医药大学附属普陀医院","上海市普陀区中心医院"],"r_h":["就诊口腔","上海市同济医院","同济大学附属同济医院","三级甲等综合性医院","作为大学附属医院","下设口腔","依托大型三甲综合医院","上海市普陀区中心医院"]},"union_base":true,"union_re":false},{"qid":"HK-50","query":"普陀区规模最大的口腔医疗机构是哪家？大机构是不是更让人放心？","cat":"信任验证","deepseek":{"b":5,"r":1,"delta":4,"change":"keep","b_h":["普陀区几家主要口腔","上海摩尔口腔医院","上海华尔康中博普众口腔医院","上海市普陀区眼病牙病防治所","上海宏康医院","综合性医院","非专科口腔医院","摩尔齿科"],"r_h":["上海宏康医院","上海摩尔口腔医院","些搜索结果常把同济大学附属口腔医院","作为口腔","上海市普陀区眼病牙病防治所"]},"wenxin":{"b":null,"r":null,"delta":null,"change":"none","b_h":["上海摩尔口腔医院","该机构为二级口腔医院","整合了牙科","二线城市建立了数十个牙科","且部分医生具备三甲医院","上海维乐·美维馨口腔门诊部","家庭全周期口腔","美年大健康口腔"],"r_h":["上海摩尔口腔医院","长三角数十城建立数十个牙科","普陀区民营口腔","同济大学附属同济医院口腔","公立综合医院口腔","涵盖口腔","普陀区公立医院口腔","上海市普陀区人民医院口腔"]},"kimi":{"b":7,"r":4,"delta":3,"change":"keep","b_h":["上海市普陀区眼病牙病防治所","普陀区口腔医院","承担全区口腔","医护人员配置在区属公立口腔","综合医院口腔","同济大学附属同济医院口腔","上海宏康医院","摩尔齿科"],"r_h":["上海市普陀区中心医院口腔","作为区属三级综合性医院","上海市普陀区眼病牙病防治所","上海宏康医院","部分专科诊所"]},"union_base":true,"union_re":true}],"mismatch":1};
+</script>
+<script>
+
+const PLATS = ['deepseek','wenxin','kimi'];
+const PNAME = {deepseek:'DeepSeek', wenxin:'文心一言', kimi:'Kimi'};
+const CATCLS = {'项目需求':'cat-need','信任验证':'cat-trust','决策对比':'cat-decide'};
+const CATS = ['项目需求','信任验证','决策对比'];
+const S = DATA.summary, MX = DATA.matrix;
+
+function esc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+
+const PAGES = [
+  {id:'overview', icon:'📊', label:'总览'},
+  {id:'platforms', icon:'🤖', label:'分平台诊断'},
+  {id:'highlights', icon:'🏆', label:'亮点题目'}
+];
+let CUR = 'overview';
+function renderNav(){
+  document.getElementById('nav').innerHTML = PAGES.map(p =>
+    '<div class="nav-btn'+(CUR===p.id?' active':'')+'" onclick="showPage(\''+p.id+'\')">'+p.icon+' '+p.label+'</div>').join('');
+}
+function showPage(id){ CUR=id; renderNav(); render(); window.scrollTo(0,0); }
+
+// ---------- SVG 分组柱状图 ----------
+function groupedBar(groups, ymax){
+  ymax = ymax||100;
+  const W=820,H=320,padL=48,padB=52,padT=40,padR=16, yb=H-padB, ih=yb-padT;
+  const iw=(W-padL-padR)/groups.length, bw=Math.min(52, iw*0.26);
+  let s='<svg viewBox="0 0 '+W+' '+H+'" style="width:100%;max-width:920px;display:block;margin:0 auto">';
+  for(let g=0; g<=ymax; g+=25){
+    const y=padT+ih*(1-g/ymax);
+    s+='<line x1="'+padL+'" y1="'+y+'" x2="'+(W-padR)+'" y2="'+y+'" stroke="#e2e8f0"/>'+
+       '<text x="'+(padL-8)+'" y="'+(y+4)+'" font-size="11" fill="#94a3b8" text-anchor="end">'+g+'%</text>';
+  }
+  groups.forEach((gp,i)=>{
+    const cx=padL+iw*i+iw/2;
+    const h1=ih*gp.base/ymax, h2=ih*gp.re/ymax;
+    s+='<rect x="'+(cx-bw-5)+'" y="'+(yb-h1)+'" width="'+bw+'" height="'+Math.max(h1,1)+'" rx="5" fill="#cbd5e1"><title>基线 '+gp.base+'%</title></rect>';
+    s+='<rect x="'+(cx+5)+'" y="'+(yb-h2)+'" width="'+bw+'" height="'+Math.max(h2,1)+'" rx="5" fill="#0ea5e9"><title>复测 '+gp.re+'%</title></rect>';
+    s+='<text x="'+(cx-bw/2-5)+'" y="'+(yb-h1-7)+'" font-size="11.5" fill="#94a3b8" text-anchor="middle" font-weight="600">'+gp.base+'%</text>';
+    s+='<text x="'+(cx+bw/2+5)+'" y="'+(yb-h2-7)+'" font-size="12.5" fill="#0284c7" text-anchor="middle" font-weight="800">'+gp.re+'%</text>';
+    const d=Math.round((gp.re-gp.base)*10)/10;
+    s+='<text x="'+cx+'" y="'+(padT-14)+'" font-size="12.5" fill="'+(d>=0?'#16a34a':'#dc2626')+'" text-anchor="middle" font-weight="800">'+(d>=0?'▲ +':'▼ ')+d+'pp</text>';
+    s+='<text x="'+cx+'" y="'+(yb+20)+'" font-size="13" fill="#334155" text-anchor="middle" font-weight="700">'+gp.label+'</text>';
+    if(gp.sub) s+='<text x="'+cx+'" y="'+(yb+37)+'" font-size="11" fill="#94a3b8" text-anchor="middle">'+gp.sub+'</text>';
+  });
+  return s+'</svg>';
+}
+const LEGEND = '<div class="legend"><span><i style="background:#cbd5e1"></i>基线（8月）</span><span><i style="background:#0ea5e9"></i>复测（9月）</span></div>';
+
+// ---------- 页面：总览 ----------
+function pgOverview(){
+  const o=S.overall, u=S.union;
+  let h='<div class="hero">'+
+    '<div class="hero-main">'+
+      '<div class="hero-tag">第一阶段优化落地 · 复测验证</div>'+
+      '<div class="hero-title">宏康医院三平台 AI 品牌总提及率</div>'+
+      '<div class="hero-big">'+o.base.pct+'%<span class="arrow">→</span>'+o.re.pct+'%<span class="hero-delta">▲ +'+o.delta_pp+'pp</span></div>'+
+    '</div>'+
+    '<div class="hero-side">'+
+      '<div class="hero-item"><span>可见题目（三平台并集）</span><b>'+u.base+' → '+u.re+' / 50</b></div>'+
+      '<div class="hero-item"><span>新增品牌提及</span><b>+'+S.rank_new_count+' 条</b></div>'+
+      '<div class="hero-item"><span>Top1 首位推荐</span><b>'+o.base.top1+' → '+o.re.top1+' 条</b></div>'+
+    '</div></div>';
+
+  const cards=[
+    {cls:'c-blue', label:'总提及率（150题次）', v:o.base.pct+'<span class="arrow">→</span>'+o.re.pct+'%', d:'+20.0pp', note:'基线 49 条 → 复测 79 条提及'},
+    {cls:'c-green', label:'可见题目数（并集）', v:u.base+'<span class="arrow">→</span>'+u.re+'<small style="font-size:15px;color:#64748b"> /50题</small>', d:'+10 题', note:'新增可见 12 题，覆盖率 86%'},
+    {cls:'c-amber', label:'Top1 首位推荐', v:o.base.top1+'<span class="arrow">→</span>'+o.re.top1+'<small style="font-size:15px;color:#64748b"> 条</small>', d:'翻倍', note:'DeepSeek 实现 0→1 突破'},
+    {cls:'c-violet', label:'新增品牌提及', v:S.rank_new_count+'<small style="font-size:15px;color:#64748b"> 条</small>', d:'+42 条', note:'DeepSeek +14 · 文心 +19 · Kimi +9'}
+  ];
+  h+='<div class="kpi-grid">'+cards.map(c=>
+    '<div class="kpi-card '+c.cls+'"><div class="kpi-label">'+c.label+'</div><div class="kpi-value">'+c.v+'</div>'+
+    '<span class="kpi-delta delta-up">▲ '+c.d+'</span><div class="kpi-note">'+c.note+'</div></div>').join('')+'</div>';
+
+  h+='<div class="card"><h3 class="blk" style="margin-top:0">分平台品牌提及率：三平台全面上升</h3>'+LEGEND+
+     groupedBar(PLATS.map(p=>({label:PNAME[p], base:S.platforms[p].base.pct, re:S.platforms[p].re.pct,
+        sub:S.platforms[p].base.mentioned+'/50 → '+S.platforms[p].re.mentioned+'/50 题'})))+'</div>';
+
+  h+='<div class="concl"><h3 class="blk" style="margin-top:0">🎯 核心结论</h3><ul>'+
+    '<li><b>覆盖率显著跃升：</b>三平台总提及率 <b>32.7% → 52.7%（+20.0pp）</b>，50 道用户搜索意图题中 <b>43 题</b>已被至少一个 AI 平台主动推荐（新增 12 题），第一阶段「官网 Schema + 百家号/知乎/小红书内容矩阵」打法成效验证。</li>'+
+    '<li><b>三平台全面上升：</b>文心一言 50% → <b>78%</b> 持续领跑，DeepSeek 12% → 34% 增速最快（+22pp），Kimi 36% → 46% 稳步爬升。</li>'+
+    '<li><b>推荐位次同步上移：</b>Top1 首位推荐翻倍（3 → 6 条），DeepSeek 的 Top3 占位从 1 条跃升至 8 条，宏康正从「被提及」走向「被优先推荐」。</li>'+
+    '</ul></div>';
+
+  h+='<div class="next-step"><span class="tag">第二阶段方向</span><p>对剩余未覆盖题目实施「一题一策」深度内容攻坚，扩大知乎/小红书高权重信源布局，推动已提及题目冲入各平台推荐位前三。</p></div>';
+  return h;
+}
+
+// ---------- 页面：分平台诊断（含50题明细） ----------
+function pgPlatforms(){
+  let h='<h2 class="section-title">🤖 分平台诊断</h2><div class="section-sub">各平台提及率、推荐位次与逐题明细</div><div class="mini-grid">';
+  const note={deepseek:'基数低、弹性最大，Top3 占位 1→8 条并实现 Top1 零的突破，排名质量改善最明显',
+              wenxin:'内容矩阵主战场，提及率近八成，39/50 题可见，是三平台中覆盖最广的阵地',
+              kimi:'稳步提升 +10pp，已积累 23 题可见，第二阶段作为重点增量平台加大信源投放'};
+  PLATS.forEach(p=>{
+    const s=S.platforms[p];
+    h+='<div class="plat-card">'+
+      '<div class="plat-head"><span class="plat-name"><span class="plat-tag plat-'+p+'">'+s.name+'</span></span><span class="kpi-delta delta-up">▲ +'+s.delta_pp+'pp</span></div>'+
+      '<div class="plat-big"><span class="old">'+s.base.pct+'% →</span> '+s.re.pct+'%</div>'+
+      '<div class="progress-track" style="margin-top:12px"><div class="progress-fill" style="width:'+s.base.pct+'%;background:#cbd5e1"></div></div>'+
+      '<div style="font-size:11px;color:#94a3b8;margin:3px 0 8px">基线 '+s.base.mentioned+'/50 题</div>'+
+      '<div class="progress-track"><div class="progress-fill" style="width:'+s.re.pct+'%"></div></div>'+
+      '<div style="font-size:11px;color:#0284c7;margin:3px 0 4px;font-weight:600">复测 '+s.re.mentioned+'/50 题</div>'+
+      '<div class="metric-row">'+
+        '<div class="metric-cell"><div class="metric-v" style="color:#2563eb">+'+s.new+'</div><div class="metric-l">新增提及</div></div>'+
+        '<div class="metric-cell"><div class="metric-v" style="color:#16a34a">↑'+s.improved+'</div><div class="metric-l">排名上升</div></div>'+
+        '<div class="metric-cell"><div class="metric-v">'+s.base.top1+' → '+s.re.top1+'</div><div class="metric-l">Top1 占位</div></div>'+
+        '<div class="metric-cell"><div class="metric-v">'+s.base.top3+' → '+s.re.top3+'</div><div class="metric-l">Top3 占位</div></div>'+
+      '</div>'+
+      '<div style="font-size:12.5px;color:#475569;line-height:1.7;margin-top:14px;background:#f8fafc;border-radius:10px;padding:10px 14px">'+note[p]+'</div>'+
+    '</div>';
+  });
+  h+='</div>';
+
+  h+='<div class="card"><h3 class="blk" style="margin-top:0">题型类别提及率对比（三平台合计）</h3>'+LEGEND+
+     groupedBar(CATS.map(c=>({label:c, base:S.cats[c].base.pct, re:S.cats[c].re.pct,
+        sub:S.cats[c].base.mentioned+'/'+S.cats[c].base.total+' → '+S.cats[c].re.mentioned+'/'+S.cats[c].re.total+' 题次'})))+
+     '<div style="font-size:12.5px;color:#475569;margin-top:6px">「项目需求」类提升最大（+31.2pp），项目科普/推荐类内容最易被 AI 采信。</div></div>';
+
+  h+='<div class="card"><h3 class="blk" style="margin-top:0">📋 50 题 × 3 平台逐题明细</h3>'+
+     '<div class="section-sub" style="margin-bottom:12px">每题每平台的基线/复测排名与变化（悬停排名可查看 AI 推荐榜单提取结果）</div>'+
+     '<div class="tab-row">'+
+     ['all','deepseek','wenxin','kimi'].map(p=>'<div class="tab-btn'+(MX_PLAT===p?' active':'')+'" onclick="setMxPlat(\''+p+'\')">'+(p==='all'?'全部平台':PNAME[p])+'</div>').join('')+
+     '<select class="filter" onchange="setMxFilter(this.value)">'+
+       [['all','全部变化'],['up','仅排名上升'],['new','仅新增提及'],['keep','仅持续提及'],['down','仅排名下降'],['lost','仅掉出'],['none','仅始终未提及']]
+       .map(o=>'<option value="'+o[0]+'"'+(MX_FILTER===o[0]?' selected':'')+'>'+o[1]+'</option>').join('')+'</select>'+
+     '<input class="search-box" placeholder="搜索问题 / 题号…" value="'+esc(MX_Q)+'" oninput="setMxQ(this.value)">'+
+     '<span id="mxCount" style="font-size:12px;color:#64748b"></span></div>'+
+     '<div style="overflow-x:auto"><table><thead><tr><th>题号</th>'+(MX_PLAT==='all'?'<th>平台</th>':'')+'<th>问题</th><th>题型</th><th>基线排名</th><th>复测排名</th><th>变化</th></tr></thead><tbody id="mxBody"></tbody></table></div></div>';
+  return h;
+}
+
+// ---------- 页面：亮点 ----------
+function pgHighlights(){
+  let h='<h2 class="section-title">🏆 亮点题目</h2><div class="section-sub">排名提升最大的题次 · 新增可见题 · 新晋 Top1 推荐</div>';
+  h+='<div class="card"><h3 class="blk" style="margin-top:0">📈 排名提升榜 TOP 10（基线已提及、复测位次前移）</h3><table><thead><tr><th>#</th><th>平台</th><th>题号</th><th>问题</th><th>题型</th><th>基线 → 复测</th><th>提升</th></tr></thead><tbody>';
+  S.rank_up.slice(0,10).forEach((it,i)=>{
+    h+='<tr><td>'+(i+1)+'</td><td><span class="plat-tag plat-'+it.plat+'">'+PNAME[it.plat]+'</span></td><td>'+it.qid+'</td><td>'+esc(it.query)+'</td>'+
+       '<td><span class="cat-tag '+CATCLS[it.cat]+'">'+it.cat+'</span></td>'+
+       '<td>第 '+it.base_rank+' 名 → 第 '+it.re_rank+' 名</td><td><span class="bdg bdg-up">↑ '+it.delta+' 位</span></td></tr>';
+  });
+  h+='</tbody></table></div>';
+
+  const top1=[];
+  MX.forEach(row=>{ PLATS.forEach(p=>{ const c=row[p];
+    if(c.r===1 && c.b!==1) top1.push({plat:p,qid:row.qid,query:row.query,cat:row.cat,b:c.b});
+  });});
+  h+='<div class="card"><h3 class="blk" style="margin-top:0">👑 新晋 Top1 推荐（复测排名第 1，共 '+top1.length+' 条）</h3><table><thead><tr><th>平台</th><th>题号</th><th>问题</th><th>题型</th><th>基线位置</th></tr></thead><tbody>';
+  top1.forEach(it=>{
+    h+='<tr><td><span class="plat-tag plat-'+it.plat+'">'+PNAME[it.plat]+'</span></td><td>'+it.qid+'</td><td>'+esc(it.query)+'</td>'+
+       '<td><span class="cat-tag '+CATCLS[it.cat]+'">'+it.cat+'</span></td>'+
+       '<td>'+(it.b?('第 '+it.b+' 名'):'<span class="bdg bdg-new">新增即登顶</span>')+'</td></tr>';
+  });
+  h+='</tbody></table></div>';
+
+  const qmap={}; MX.forEach(r=>qmap[r.qid]=r);
+  h+='<div class="card"><h3 class="blk" style="margin-top:0">🌱 新增可见题目（基线不可见 → 复测可见，共 '+S.union.new+' 题）</h3><div>';
+  S.union.new_qids.forEach(q=>{
+    h+='<span class="chip" title="'+esc(qmap[q].query)+'"><b>'+q+'</b>'+esc(qmap[q].query.length>24?qmap[q].query.slice(0,24)+'…':qmap[q].query)+'</span>';
+  });
+  h+='</div></div>';
+  return h;
+}
+
+// ---------- 明细表 ----------
+let MX_PLAT='all', MX_FILTER='all', MX_Q='';
+function changeCell(c){
+  if(c.change==='new') return '<span class="bdg bdg-new">新增 · 第'+c.r+'名</span>';
+  if(c.change==='lost') return '<span class="bdg bdg-lost">掉出 · 原第'+c.b+'名</span>';
+  if(c.change==='none') return '<span class="bdg bdg-none">未提及</span>';
+  if(c.delta>0) return '<span class="bdg bdg-up">↑ '+c.delta+' 位</span>';
+  if(c.delta<0) return '<span class="bdg bdg-down">↓ '+(-c.delta)+' 位</span>';
+  return '<span class="bdg bdg-flat">持平 · 第'+c.r+'名</span>';
+}
+function rankCell(n, hs){
+  if(!n) return '<span class="rank-pill rank-no">—</span>';
+  return '<span class="rank-pill rank-good" title="'+esc(hs.slice(0,6).map((h,i)=>(i+1)+'. '+h).join('\n'))+'">第 '+n+' 名</span>';
+}
+function matchFilter(c){
+  if(MX_FILTER==='all') return true;
+  if(MX_FILTER==='up') return c.delta!==null && c.delta>0;
+  if(MX_FILTER==='down') return c.delta!==null && c.delta<0;
+  if(MX_FILTER==='new') return c.change==='new';
+  if(MX_FILTER==='lost') return c.change==='lost';
+  if(MX_FILTER==='none') return c.change==='none';
+  if(MX_FILTER==='keep') return c.change==='keep';
+  return true;
+}
+function renderMatrixRows(){
+  let rows=[];
+  MX.forEach(row=>{
+    PLATS.forEach(p=>{
+      if(MX_PLAT!=='all' && MX_PLAT!==p) return;
+      const c=row[p];
+      if(!matchFilter(c)) return;
+      if(MX_Q && row.query.indexOf(MX_Q)<0 && row.qid.toLowerCase().indexOf(MX_Q.toLowerCase())<0) return;
+      rows.push({row:row, p:p, c:c});
+    });
+  });
+  let h='';
+  rows.forEach(it=>{
+    h+='<tr><td><b>'+it.row.qid+'</b></td>'+
+       (MX_PLAT==='all'?'<td><span class="plat-tag plat-'+it.p+'">'+PNAME[it.p]+'</span></td>':'')+
+       '<td style="min-width:260px">'+esc(it.row.query)+'</td>'+
+       '<td><span class="cat-tag '+CATCLS[it.row.cat]+'">'+it.row.cat+'</span></td>'+
+       '<td>'+rankCell(it.c.b, it.c.b_h)+'</td>'+
+       '<td>'+rankCell(it.c.r, it.c.r_h)+'</td>'+
+       '<td>'+changeCell(it.c)+'</td></tr>';
+  });
+  return {html:h, count:rows.length};
+}
+function setMxPlat(p){MX_PLAT=p; render();}
+function setMxFilter(f){MX_FILTER=f; render();}
+function setMxQ(q){MX_Q=q; refreshMatrix();}
+function refreshMatrix(){
+  const r=renderMatrixRows();
+  const tb=document.getElementById('mxBody');
+  if(tb){ tb.innerHTML=r.html; document.getElementById('mxCount').textContent='共 '+r.count+' 条'; }
+}
+
+// ---------- 路由 ----------
+function render(){
+  const w=document.querySelector('.wrap');
+  let html='';
+  if(CUR==='overview') html=pgOverview();
+  else if(CUR==='platforms') html=pgPlatforms();
+  else if(CUR==='highlights') html=pgHighlights();
+  const footer=w.querySelector('.footer-note');
+  w.innerHTML=html;
+  if(footer) w.appendChild(footer);
+  if(CUR==='platforms') refreshMatrix();
+}
+renderNav();
+render();
+
+</script>
+</body>
+</html>
