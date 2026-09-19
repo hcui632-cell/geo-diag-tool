@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>GEO实时诊断工具 V2.1 - 真实AI可见度检测（纯前端版）</title>
+<title>GEO实时诊断工具 V2.3 - 真实AI可见度检测（纯前端版）</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
@@ -213,7 +213,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;b
 </head>
 <body>
 <div class="header">
-  <h1>GEO实时诊断工具 V2.1 <span class="brand-badge" id="header-brand">真实AI可见度</span></h1>
+  <h1>GEO实时诊断工具 V2.3 <span class="brand-badge" id="header-brand">真实AI可见度</span></h1>
   <p>支持 DeepSeek / Kimi / 文心一言 / 豆包 / 通义千问 五平台 · API Key本地存储 · 纯前端运行 · 无需部署</p>
 </div>
 
@@ -245,7 +245,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;b
         <label>预设客户（一键载入问题集与品牌关键词）</label>
         <select id="client-select" onchange="loadClient(this.value)" style="width:100%;padding:8px 10px;border:1px solid #F0E0C0;border-radius:6px;background:#FFFAF0;font-size:13px;color:#333">
           <option value="custom">自定义（手动输入）</option>
-          <option value="hongkang" selected>上海宏康医院（宏康口腔）· 50题</option>
+          <option value="hongkang_demo" selected>🎯 宏康演示题（打开即测）</option>
+          <option value="hongkang">上海宏康医院（宏康口腔）· 50题</option>
           <option value="yalai">雅莱齿科（杭州）· 50题</option>
         </select>
         <label style="margin-top:10px">目标品牌名称</label>
@@ -359,6 +360,14 @@ var SYSTEM_PROMPT = '你是一位口腔医疗领域的专业助手，对上海�
 
 // ============ 预设客户（品牌 + 50题标准问题集）============
 var PRESET_CLIENTS = {
+  hongkang_demo: {
+    label: '上海宏康医院 · 演示题（实测五平台全部首位提及）',
+    brand: '宏康',
+    keywords: ['宏康医院', '宏康口腔', '上海宏康医院', '上海宏康', '宏康'],
+    questions: [
+    '上海宏康医院口腔科怎么样？正规吗？'
+    ]
+  },
   hongkang: {
     label: '上海宏康医院（宏康口腔）· 上海普陀',
     brand: '宏康',
@@ -665,13 +674,14 @@ async function callAI(platform, question, apiKey) {
   var body;
 
   if (platform === 'wenxin') {
-    // 文心一言：系统prompt放在user消息里
+    // 文心一言：系统prompt放在user消息里；开启联网搜索，贴近C端App表现
     body = {
       model: config.model,
       messages: [{ role: 'user', content: SYSTEM_PROMPT + '\n\n用户问题：' + question }],
       temperature: 0.7,
       max_tokens: 2000,
-      stream: false
+      stream: false,
+      web_search: { enable: true }
     };
   } else if (platform === 'kimi') {
     // Kimi：temperature=1, max_tokens=4000
@@ -697,6 +707,8 @@ async function callAI(platform, question, apiKey) {
       max_tokens: 2000,
       stream: false
     };
+    // 通义千问：开启联网搜索，贴近C端App表现
+    if (platform === 'qwen') body.enable_search = true;
   }
 
   // 使用 AbortController 实现超时（Kimi 等推理模型单题可能需 30-90 秒，放宽到 150 秒）
