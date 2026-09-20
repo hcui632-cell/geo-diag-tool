@@ -74,6 +74,10 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;b
 .platform-progress{display:flex;gap:16px;flex-wrap:wrap;margin-bottom:16px}
 .plat-progress-card{flex:1;min-width:200px;background:#FFF8E1;border:1px solid #F0E0C0;border-radius:10px;padding:16px}
 .plat-progress-card .plat-name{font-size:14px;font-weight:600;margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.net-badge{font-size:10px;font-weight:500;padding:1px 6px;border-radius:8px;line-height:1.5;vertical-align:middle}
+.net-badge.net{background:#E8F5E9;color:#2E7D32;border:1px solid #A5D6A7}
+.net-badge.local{background:#FFF8E1;color:#8D6E00;border:1px solid #FFE082}
+.net-note{font-size:11px;color:#999;margin-top:8px;line-height:1.6}
 .plat-dot{width:10px;height:10px;border-radius:50%;display:inline-block}
 .plat-dot.pending{background:#CCCCCC}
 .plat-dot.running{background:#fbbf24;animation:pulse 1.5s infinite}
@@ -269,6 +273,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;b
   <div class="progress-section" id="progress-section">
     <h2><span class="icon">⚡</span>实时进度</h2>
     <div class="platform-progress" id="platform-progress"></div>
+    <div class="net-note">数据口径：🌐联网 = 平台官方API联网检索实测（与消费者使用场景对齐的公开接口口径）；📚模型知识 = 模型训练语料视角（品牌认知沉淀）。同一题目两种口径可能不同，属正常现象。</div>
     <div class="live-log" id="live-log"></div>
   </div>
 
@@ -316,11 +321,11 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;b
 
 // ============ 平台配置 ============
 var PLATFORM_CONFIG = {
-  deepseek: { name: 'DeepSeek', bg: 'ds', sn: 'DS', color: '#60a5fa', model: 'deepseek-chat', url: 'https://api.deepseek.com/v1/chat/completions', perQuestionMs: 6000, rateLimit: 10 },
-  kimi:     { name: 'Kimi',     bg: 'km', sn: 'KM', color: '#c084fc', model: 'kimi-k3', url: 'https://api.moonshot.cn/v1/chat/completions', perQuestionMs: 20000, rateLimit: 3 },
-  wenxin:   { name: '文心一言',  bg: 'wx', sn: 'WX', color: '#fbbf24', model: 'ernie-4.0-8k-latest', url: 'https://qianfan.baidubce.com/v2/chat/completions', perQuestionMs: 1000, rateLimit: 60 },
-  doubao:   { name: '豆包',     bg: 'db', sn: 'DB', color: '#34d399', model: 'doubao-seed-2-1-turbo-260628', url: 'https://ark.cn-beijing.volces.com/api/v3/chat/completions', perQuestionMs: 6000, rateLimit: 10 },
-  qwen:     { name: '通义千问',   bg: 'qw', sn: 'QW', color: '#f472b6', model: 'qwen-plus', url: 'https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions', perQuestionMs: 6000, rateLimit: 10 }
+  deepseek: { name: 'DeepSeek', bg: 'ds', sn: 'DS', color: '#60a5fa', model: 'deepseek-chat', url: 'https://api.deepseek.com/v1/chat/completions', perQuestionMs: 6000, rateLimit: 10, net: false },
+  kimi:     { name: 'Kimi',     bg: 'km', sn: 'KM', color: '#c084fc', model: 'kimi-k3', url: 'https://api.moonshot.cn/v1/chat/completions', perQuestionMs: 20000, rateLimit: 3, net: false },
+  wenxin:   { name: '文心一言',  bg: 'wx', sn: 'WX', color: '#fbbf24', model: 'ernie-4.0-8k-latest', url: 'https://qianfan.baidubce.com/v2/chat/completions', perQuestionMs: 1000, rateLimit: 60, net: true },
+  doubao:   { name: '豆包',     bg: 'db', sn: 'DB', color: '#34d399', model: 'doubao-seed-2-1-turbo-260628', url: 'https://ark.cn-beijing.volces.com/api/v3/chat/completions', perQuestionMs: 6000, rateLimit: 10, net: true },
+  qwen:     { name: '通义千问',   bg: 'qw', sn: 'QW', color: '#f472b6', model: 'qwen-plus', url: 'https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions', perQuestionMs: 6000, rateLimit: 10, net: true }
 };
 var ALL_PLATFORMS = ['deepseek', 'kimi', 'wenxin', 'doubao', 'qwen'];
 
@@ -344,6 +349,12 @@ function deobfuscateKey(s) {
   } catch (e) { return ''; }
 }
 function getPresetKey(p) { return deobfuscateKey(PRESET_KEYS_OBF[p]); }
+// 联网口径徽章：🌐联网=API开启实时检索；📚模型知识=训练语料视角
+function netBadge(p) {
+  var c = PLATFORM_CONFIG[p];
+  if (!c) return '';
+  return c.net ? ' <span class="net-badge net">🌐联网</span>' : ' <span class="net-badge local">📚模型知识</span>';
+}
 var ERROR_LABELS = {
   key_invalid: 'API Key无效或已失效',
   insufficient_balance: '账户余额不足',
@@ -709,6 +720,8 @@ async function callAI(platform, question, apiKey) {
     };
     // 通义千问：开启联网搜索，贴近C端App表现
     if (platform === 'qwen') body.enable_search = true;
+    // 豆包：开启联网搜索（火山方舟 Chat API 支持 enable_search）
+    if (platform === 'doubao') body.enable_search = true;
   }
 
   // 使用 AbortController 实现超时（Kimi 等推理模型单题可能需 30-90 秒，放宽到 150 秒）
@@ -828,7 +841,7 @@ function renderApikeyPanel() {
     else if (p === 'qwen') modelLine += '<br><span style="color:#16a34a">qwen-plus Key 已内置并实测可用（2026-09-19）</span>';
     card.innerHTML =
       '<div class="apikey-card-header">' +
-        '<div class="apikey-card-name"><span class="apikey-dot ' + (enabled ? 'on' : 'off') + '" id="key-dot-' + p + '"></span>' + config.name + '</div>' +
+        '<div class="apikey-card-name"><span class="apikey-dot ' + (enabled ? 'on' : 'off') + '" id="key-dot-' + p + '"></span>' + config.name + netBadge(p) + '</div>' +
         '<div class="toggle-switch ' + (enabled ? 'on' : '') + '" id="toggle-' + p + '" onclick="togglePlatform(\'' + p + '\')"><div class="toggle-knob"></div></div>' +
       '</div>' +
       '<div class="apikey-input-wrapper">' +
@@ -1027,7 +1040,7 @@ function initProgressUI(total, configs) {
     var i = PLATFORM_CONFIG[p];
     var card = document.createElement('div');
     card.className = 'plat-progress-card';
-    card.innerHTML = '<div class="plat-name"><span class="plat-dot pending" id="dot-' + p + '"></span>' + i.name + '</div>' +
+    card.innerHTML = '<div class="plat-name"><span class="plat-dot pending" id="dot-' + p + '"></span>' + i.name + netBadge(p) + '</div>' +
       '<div class="plat-count"><span id="done-' + p + '">0</span> / <span class="plat-total">' + total + '</span></div>' +
       '<div class="plat-status-text pending" id="status-text-' + p + '">等待中</div>' +
       '<div class="plat-progress-bar"><div class="plat-progress-bar-fill ' + i.bg + '" id="bar-' + p + '" style="width:0%"></div></div>';
