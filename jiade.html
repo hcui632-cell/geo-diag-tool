@@ -1,0 +1,422 @@
+HELLO_TEST_123<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>佳德口腔 · AI搜索GEO基线诊断看板</title>
+<style>
+:root{
+  --mt-yellow:#FFC300; --mt-yellow-deep:#FFB000; --mt-yellow-soft:#FFF3C4;
+  --warm-bg:#FFF9E9; --warm-card:#FFFDF5; --ink:#33270A; --ink-2:#6B5A2E;
+  --line:#F0DFA8; --good:#1F9D55; --bad:#D83A2E; --mid:#E8890C; --blue:#2B6CB0;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:"PingFang SC","Microsoft YaHei",-apple-system,sans-serif;background:var(--warm-bg);color:var(--ink);line-height:1.65}
+.wrap{max-width:1280px;margin:0 auto;padding:0 24px 80px}
+/* 头部 */
+header{background:linear-gradient(135deg,#FFC300 0%,#FFDA55 60%,#FFE998 100%);padding:42px 0 34px;border-bottom:4px solid #E8AC00}
+header .wrap{padding-bottom:0}
+h1{font-size:30px;letter-spacing:1px}
+h1 small{font-size:15px;font-weight:400;color:#5c4a10;margin-left:12px}
+.sub{margin-top:10px;color:#5c4a10;font-size:14px;display:flex;gap:22px;flex-wrap:wrap}
+.sub b{color:#33270A}
+/* 导航 */
+nav{position:sticky;top:0;z-index:50;background:rgba(255,249,233,.96);backdrop-filter:blur(6px);border-bottom:1px solid var(--line);margin:0 -24px;padding:0 24px}
+nav ul{display:flex;list-style:none;overflow-x:auto}
+nav li{padding:14px 20px;cursor:pointer;font-size:15px;color:var(--ink-2);border-bottom:3px solid transparent;white-space:nowrap;transition:.15s}
+nav li.on{color:var(--ink);font-weight:700;border-bottom-color:var(--mt-yellow-deep)}
+nav li:hover{color:var(--ink)}
+section{display:none;padding-top:28px}
+section.on{display:block;animation:fade .25s}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+/* 卡片 */
+.card{background:var(--warm-card);border:1px solid var(--line);border-radius:14px;padding:22px 24px;margin-bottom:20px;box-shadow:0 2px 10px rgba(200,160,20,.06)}
+.card h3{font-size:17px;margin-bottom:6px}
+.card .hint{font-size:12.5px;color:var(--ink-2);margin-bottom:12px}
+.grid{display:grid;gap:16px}
+.g5{grid-template-columns:repeat(5,1fr)}
+.g3{grid-template-columns:repeat(3,1fr)}
+.g2{grid-template-columns:repeat(2,1fr)}
+@media(max-width:1000px){.g5{grid-template-columns:repeat(2,1fr)}.g3,.g2{grid-template-columns:1fr}}
+/* 指标卡 */
+.metric{background:#fff;border:1px solid var(--line);border-radius:12px;padding:16px;text-align:center;position:relative}
+.metric .v{font-size:34px;font-weight:800;line-height:1.2}
+.metric .k{font-size:13px;color:var(--ink-2);margin-top:2px}
+.metric .tag{position:absolute;top:8px;right:10px;font-size:11px;padding:1px 8px;border-radius:99px}
+.tag-api{background:#EDF2F7;color:#4A5568;border:1px solid #CBD5E0}
+.tag-real{background:#E6F7EC;color:#1F9D55;border:1px solid #9BE3B4}
+.tag-part{background:#FFF1E6;color:#D2691E;border:1px solid #F5CBA3}
+.bar-track{height:10px;background:#F3E7C3;border-radius:99px;margin-top:10px;overflow:hidden}
+.bar-fill{height:100%;border-radius:99px;background:linear-gradient(90deg,#FFB000,#FFC300)}
+/* 表格 */
+table{width:100%;border-collapse:collapse;font-size:13.5px}
+th,td{padding:9px 10px;border-bottom:1px solid var(--line);text-align:left}
+th{background:var(--mt-yellow-soft);font-weight:700;position:sticky;top:52px}
+tr:hover td{background:#FFFBEB}
+.pill{display:inline-block;padding:1px 9px;border-radius:99px;font-size:12px;font-weight:600}
+.pill-g{background:#E6F7EC;color:var(--good)}
+.pill-r{background:#FDE8E6;color:var(--bad)}
+.pill-y{background:#FFF3C4;color:#8a6d00}
+.pill-b{background:#E3EEF9;color:var(--blue)}
+/* 题目手风琴 */
+.q{border:1px solid var(--line);border-radius:10px;margin-bottom:10px;background:#fff;overflow:hidden}
+.q-h{padding:12px 16px;cursor:pointer;display:flex;gap:10px;align-items:center;user-select:none}
+.q-h:hover{background:#FFFBEB}
+.q-h .qid{font-weight:700;color:var(--ink-2);font-size:12.5px;min-width:52px}
+.q-h .qt{flex:1;font-size:14px}
+.q-h .st{font-size:12px}
+.q-b{display:none;border-top:1px dashed var(--line);padding:14px 16px;background:#FFFDF5}
+.q.open .q-b{display:block}
+.run{border-left:3px solid var(--mt-yellow);padding:8px 12px;margin:10px 0;background:#fff;border-radius:0 8px 8px 0}
+.run .meta{font-size:12px;color:var(--ink-2);margin-bottom:6px;display:flex;gap:12px;flex-wrap:wrap}
+.run pre{white-space:pre-wrap;word-break:break-word;font-family:inherit;font-size:13px;color:#4a3c14;max-height:400px;overflow:auto}
+.cites{margin-top:8px;font-size:12.5px}
+.cites a{color:var(--blue);text-decoration:none;margin-right:10px}
+.cites a:hover{text-decoration:underline}
+.filterbar{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px;align-items:center}
+.filterbar select,.filterbar input{padding:7px 12px;border:1px solid var(--line);border-radius:8px;background:#fff;font-size:13.5px;color:var(--ink)}
+.plat-btns{display:flex;gap:8px;flex-wrap:wrap}
+.plat-btns button{padding:7px 16px;border-radius:99px;border:1.5px solid var(--line);background:#fff;cursor:pointer;font-size:13.5px;color:var(--ink-2)}
+.plat-btns button.on{background:var(--mt-yellow);border-color:var(--mt-yellow-deep);color:var(--ink);font-weight:700}
+.note{background:#FFF3C4;border:1px solid #EBD067;border-radius:10px;padding:12px 16px;font-size:13px;margin-bottom:16px}
+.big-conclusion{font-size:16px;background:linear-gradient(135deg,#FFF8DC,#FFEFB8);border:1px solid #EBD067}
+.big-conclusion b{color:#B45F00}
+.legend{font-size:12px;color:var(--ink-2);display:flex;gap:16px;flex-wrap:wrap;margin-top:8px}
+footer{margin-top:40px;text-align:center;color:var(--ink-2);font-size:12.5px}
+.dom-link{color:var(--blue);text-decoration:none}
+.dom-link:hover{text-decoration:underline}
+.rank-no{display:inline-block;width:22px;height:22px;line-height:22px;text-align:center;border-radius:6px;background:#F3E7C3;font-size:12px;font-weight:700}
+.rank-no.top{background:var(--mt-yellow);color:var(--ink)}
+</style>
+</head>
+<body>
+<header><div class="wrap">
+  <h1>佳德口腔 · AI搜索 GEO 基线诊断看板 <small>合肥 + 阜阳 · 71 题 × 5 大 AI 平台</small></h1>
+  <div class="sub">
+    <span>数据口径：<b>A池 51 题</b>（真实用户搜法，不带品牌词）出可见率 · <b>B池 20 题</b>（带品牌词）出事实校验</span>
+    <span>每题采样 3 次 · 原文与引用全部留档可回查</span>
+    <span id="genTime"></span>
+  </div>
+</div></header>
+<div class="wrap">
+<nav><ul id="navUl">
+  <li data-s="overview" class="on">总览结论</li>
+  <li data-s="platform">分平台诊断</li>
+  <li data-s="compete">竞对定位</li>
+  <li data-s="source">投放指南</li>
+  <li data-s="trust">信任验证（B池）</li>
+  <li data-s="verify">数据校验</li>
+</ul></nav>
+
+<!-- ========== 总览 ========== -->
+<section id="overview" class="on">
+  <div class="card big-conclusion" id="headline"></div>
+  <div class="card">
+    <h3>五大 AI 平台 · 佳德可见率（A池 51 题，真实用户搜法）</h3>
+    <div class="hint">同一套题、同一时间窗、每题 3 次取样；豆包/千问为 API 参考口径（客户端受网络与安全策略限制），仅作量级参考</div>
+    <div class="grid g5" id="platCards"></div>
+    <div class="legend">
+      <span><span class="pill pill-g">客户端实测</span> 与 C 端用户看到的一致，可现场复测</span>
+      <span><span class="pill pill-b">API参考</span> 工程接口口径，只看量级</span>
+      <span><span class="pill pill-y">补测中</span> 文心客户端分批补测，数据实时刷新</span>
+    </div>
+  </div>
+  <div class="grid g2">
+    <div class="card"><h3>城市水位拆分</h3><div class="hint">合肥为主战场（55 题），阜阳为佳德扩张首站（16 题）</div><div id="cityBox"></div></div>
+    <div class="card"><h3>首推率（AI 第一个推荐佳德的比例）</h3><div class="hint">可见≠首推：出现在回答里 vs 被 AI 放在第一位推荐，转化价值差一个量级</div><div id="firstBox"></div></div>
+  </div>
+</section>
+
+<!-- ========== 分平台诊断 ========== -->
+<section id="platform">
+  <div class="card">
+    <h3>71 题逐题诊断 · AI 原文可展开</h3>
+    <div class="hint">每一题的每一次回答都留了原文 + 引用链接 + 会话地址，点题展开即可核对</div>
+    <div class="filterbar">
+      <div class="plat-btns" id="platBtns"></div>
+      <select id="poolSel"><option value="">全部题池</option><option value="泛流量">A池·泛流量题</option><option value="品牌词">B池·品牌词题</option></select>
+      <select id="visSel"><option value="">提及状态</option><option value="1">提及佳德</option><option value="0">未提及佳德</option></select>
+      <input id="qSearch" placeholder="搜题目关键词…" style="flex:1;min-width:180px">
+    </div>
+    <div id="qList"></div>
+  </div>
+</section>
+
+<!-- ========== 竞对定位 ========== -->
+<section id="compete">
+  <div class="card">
+    <h3>13 个口腔品牌 · AI 提及矩阵（A池）</h3>
+    <div class="hint">同一道题里 AI 提了谁、没提谁，一屏看清佳德在每个平台的竞争位置</div>
+    <div style="overflow-x:auto"><table id="compTable"></table></div>
+  </div>
+  <div class="card"><h3>竞对提及率排行</h3><div class="hint" id="compHint"></div><div id="compBars"></div></div>
+</section>
+
+<!-- ========== 投放指南 ========== -->
+<section id="source">
+  <div class="card">
+    <h3>AI 引用信源排行 → 内容投放指南</h3>
+    <div class="hint">AI 回答时实际引用的网站域名（客户端实测平台）。投内容就要投到 AI 已经在引用的信源上——以下为引用次数 Top 域名，点击可直达核验</div>
+    <div class="plat-btns" id="srcBtns" style="margin-bottom:14px"></div>
+    <div id="srcTable"></div>
+  </div>
+  <div class="card"><h3>怎么用这份清单</h3><div id="srcGuide" style="font-size:14px"></div></div>
+</section>
+
+<!-- ========== 信任验证 ========== -->
+<section id="trust">
+  <div class="card">
+    <h3>B池 20 题 · 品牌事实校验</h3>
+    <div class="hint">带"佳德"的题不进可见率，价值是检验 AI 是否"认识"佳德：门店数、年份、医保、地址、官网这些硬事实，AI 说对了多少——这决定了 A 池里 AI 敢不敢推荐佳德</div>
+    <div class="plat-btns" id="trustBtns" style="margin-bottom:14px"></div>
+    <div id="trustBox"></div>
+  </div>
+</section>
+
+<!-- ========== 数据校验 ========== -->
+<section id="verify">
+  <div class="card">
+    <h3>每一条数据都可以当场回查</h3>
+    <div style="font-size:14px;line-height:2" id="verifyBox"></div>
+  </div>
+</section>
+
+<footer>佳德口腔 GEO 基线诊断 · 美团医疗服务业务部 · 数据与原文留档一一对应，欢迎任意抽题复测</footer>
+</div>
+<script src="dashboard_data.js"></script>
+<script>
+(function(){
+var D = window.__dashData || {summary:{platforms:{}},questions:{},data:{}};
+var S = D.summary, Q = D.questions, P = D.data;
+var PLATS = Object.keys(P);
+var REAL = ['Kimi','DeepSeek','文心一言'];
+var $ = function(id){return document.getElementById(id)};
+
+document.getElementById('genTime').textContent = '生成时间：' + (S.generated_at||'');
+
+/* ---------- 总览 ---------- */
+(function(){
+  var cards = '';
+  PLATS.forEach(function(p){
+    var s = S.platforms[p]||{}; var a = s.A||{};
+    var rate = a['可见率']; var done = a['题数']||0;
+    var tag = s.api_reference ? '<span class="tag tag-api">API参考</span>'
+            : (done<51 ? '<span class="tag tag-part">补测中 '+done+'/51</span>' : '<span class="tag tag-real">客户端实测</span>');
+    var v = (rate===null||rate===undefined) ? '—' : rate + '%';
+    cards += '<div class="metric">'+tag+'<div class="v">'+v+'</div><div class="k">'+p+' 可见率</div>'
+      + '<div class="bar-track"><div class="bar-fill" style="width:'+(rate||0)+'%"></div></div>'
+      + '<div style="font-size:12px;color:#6B5A2E;margin-top:6px">首推率 '+(a['首推率']===null||a['首推率']===undefined?'—':a['首推率']+'%')+'</div></div>';
+  });
+  $('platCards').innerHTML = cards;
+
+  // 头部结论
+  var km = (S.platforms['Kimi']||{}).A||{}, ds=(S.platforms['DeepSeek']||{}).A||{}, wx=(S.platforms['文心一言']||{}).A||{};
+  $('headline').innerHTML = '<b>一句话结论：</b>佳德在 AI 搜索里"偏科"严重——Kimi 可见率 <b>'+(km['可见率']||'—')+'%</b>，'
+    + '文心一言 <b>'+(wx['可见率']||'—')+'%</b>，DeepSeek 仅 <b>'+(ds['可见率']||'—')+'%</b>，豆包、千问几乎不提及。'
+    + '同一品牌、同一套真实用户问题，五个 AI 平台给不给佳德曝光，从 <b>71% 到 0%</b> 天差地别——'
+    + '这正是 GEO 优化的空间：把 Kimi 上已经成立的信源结构，复制到其它四个平台。'
+    + '豆包、千问（API 口径）接近空白，说明佳德在短视频/阿里系信源里的数字资产近乎为零。';
+
+  // 城市
+  var cityHtml = '<table><tr><th>平台</th><th>合肥可见率</th><th>阜阳可见率</th></tr>';
+  PLATS.forEach(function(p){
+    var c = ((S.platforms[p]||{}).A||{})['城市']||{};
+    var hf = c['合肥']||{}, fy = c['阜阳']||{};
+    cityHtml += '<tr><td>'+p+'</td><td>'+(hf['率']===null||hf['率']===undefined?'—':hf['率']+'% <span style="color:#8a7a45;font-size:12px">('+hf['可见']+'/'+hf['总']+')</span>')+'</td>'
+      + '<td>'+(fy['率']===null||fy['率']===undefined?'—':fy['率']+'% <span style="color:#8a7a45;font-size:12px">('+fy['可见']+'/'+fy['总']+')</span>')+'</td></tr>';
+  });
+  $('cityBox').innerHTML = cityHtml+'</table>';
+
+  // 首推
+  var firstHtml = '<table><tr><th>平台</th><th>首推率</th><th>首推/总次数</th></tr>';
+  PLATS.forEach(function(p){
+    var a = (S.platforms[p]||{}).A||{};
+    firstHtml += '<tr><td>'+p+'</td><td><b>'+(a['首推率']===null||a['首推率']===undefined?'—':a['首推率']+'%')+'</b></td><td>'+(a['首推次数']||0)+' / '+(a['runs']||0)+'</td></tr>';
+  });
+  $('firstBox').innerHTML = firstHtml+'</table>';
+})();
+
+/* ---------- 分平台诊断 ---------- */
+var curPlat = PLATS[0], poolF='', visF='', qF='';
+function renderPlatBtns(){
+  $('platBtns').innerHTML = PLATS.map(function(p){
+    return '<button class="'+(p===curPlat?'on':'')+'" data-p="'+p+'">'+p+'</button>';
+  }).join('');
+}
+function esc(s){return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;')}
+function renderQList(){
+  var blob = P[curPlat]||{};
+  var ids = Object.keys(Q).sort();
+  var html='', shown=0;
+  ids.forEach(function(qid){
+    var rec = blob[qid]; if(!rec) return;
+    var q = Q[qid];
+    if(poolF && q.pool!==poolF) return;
+    var runs = (rec.runs||[]).filter(function(r){return r.reply});
+    if(!runs.length) return;
+    var vis = runs.some(function(r){return r.visible});
+    if(visF!=='' && String(vis?1:0)!==visF) return;
+    if(qF && q.query.indexOf(qF)<0) return;
+    shown++;
+    var poolTag = q.pool==='品牌词' ? '<span class="pill pill-b">B池·校验</span>' : '<span class="pill pill-y">A池</span>';
+    var visTag = q.pool==='品牌词' ? '' : (vis?'<span class="pill pill-g">提及佳德</span>':'<span class="pill pill-r">未提及</span>');
+    var runsHtml = runs.map(function(r){
+      var cites = (r.citations||[]).map(function(c){
+        var url = typeof c==='string'?c:(c.url||'');
+        var dom = typeof c==='string'?c.replace(/^https?:\/\//,'').split('/')[0]:(c.domain||'');
+        return url?'<a class="dom-link" href="'+url+'" target="_blank" rel="noopener">'+esc(dom)+'</a>':'';
+      }).filter(Boolean).join('');
+      return '<div class="run"><div class="meta"><span>第 '+r.run+' 次</span>'
+        + (r.visible?'<span class="pill pill-g">提及佳德</span>':'<span class="pill pill-r">未提及</span>')
+        + (r.first_brand==='佳德'?'<span class="pill pill-y">首推佳德</span>':'')
+        + (r.partial?'<span class="pill pill-b">部分取样</span>':'')
+        + (r.chat_url?'<a class="dom-link" href="'+r.chat_url+'" target="_blank" rel="noopener">会话回放 ↗</a>':'')
+        + '<span>'+(r.ts||'').slice(0,16).replace('T',' ')+'</span></div>'
+        + '<pre>'+esc(r.reply)+'</pre>'
+        + (cites?'<div class="cites">引用信源：'+cites+'</div>':'')+'</div>';
+    }).join('');
+    html += '<div class="q"><div class="q-h"><span class="qid">'+qid+'</span><span class="qt">'+esc(q.query)+'</span>'+poolTag+'<span class="st">'+visTag+'</span></div><div class="q-b">'+runsHtml+'</div></div>';
+  });
+  $('qList').innerHTML = '<div style="font-size:13px;color:#6B5A2E;margin-bottom:10px">当前筛选：'+shown+' 题（点击题目展开 AI 原文）</div>'+html;
+}
+renderPlatBtns(); renderQList();
+
+/* ---------- 竞对定位 ---------- */
+(function(){
+  var brands = null;
+  PLATS.forEach(function(p){
+    var comp = ((S.platforms[p]||{}).A||{})['竞对']||{};
+    Object.keys(comp).forEach(function(b){ if(!brands) brands={}; brands[b]=1; });
+  });
+  brands = Object.keys(brands||{});
+  var html = '<tr><th>品牌</th>'+PLATS.map(function(p){return '<th>'+p+'</th>'}).join('')+'<th>综合</th></tr>';
+  var rows = brands.map(function(b){
+    var cells='', sum=0, n=0;
+    PLATS.forEach(function(p){
+      var comp = ((S.platforms[p]||{}).A||{})['竞对']||{};
+      var r = comp[b] ? comp[b]['率'] : null;
+      if(r!==null&&r!==undefined){sum+=r;n++;}
+      cells += '<td>'+(r===null||r===undefined?'<span style="color:#c9b98a">—</span>':r+'%')+'</td>';
+    });
+    var avg = n?Math.round(sum/n*10)/10:0;
+    return {b:b, html:'<tr><td><b>'+b+'</b>'+(b==='佳德'?' <span class="pill pill-y">我方</span>':'')+'</td>'+cells+'<td><b>'+avg+'%</b></td></tr>', avg:avg};
+  });
+  rows.sort(function(a,b){return b.avg-a.avg});
+  $('compTable').innerHTML = html + rows.map(function(r){return r.html}).join('');
+
+  var top = rows.slice(0,10);
+  var max = top.length?top[0].avg:1;
+  $('compHint').textContent = '按各平台提及率综合排序（取有数据平台的均值）';
+  $('compBars').innerHTML = top.map(function(r,i){
+    return '<div style="display:flex;align-items:center;gap:12px;margin:8px 0">'
+      + '<span class="rank-no '+(i<3?'top':'')+'">'+(i+1)+'</span>'
+      + '<span style="width:130px;font-weight:'+(r.b==='佳德'?'800':'400')+'">'+r.b+'</span>'
+      + '<div style="flex:1;height:18px;background:#F3E7C3;border-radius:99px;overflow:hidden"><div style="height:100%;width:'+Math.round(r.avg/max*100)+'%;background:'+(r.b==='佳德'?'linear-gradient(90deg,#FFB000,#FFC300)':'#E8D9A8')+'"></div></div>'
+      + '<b style="width:56px;text-align:right">'+r.avg+'%</b></div>';
+  }).join('');
+})();
+
+/* ---------- 投放指南 ---------- */
+var curSrc = PLATS[0];
+function renderSrcBtns(){
+  $('srcBtns').innerHTML = PLATS.map(function(p){
+    return '<button class="'+(p===curSrc?'on':'')+'" data-p="'+p+'">'+p+'</button>';
+  }).join('');
+}
+function renderSrc(){
+  var a = (S.platforms[curSrc]||{}).A||{};
+  var tops = a['引用域名Top']||[];
+  if(!tops.length){
+    $('srcTable').innerHTML = '<div class="note">'+curSrc+' 的回传数据未包含可解析的引用域名（API/脚本口径限制），该平台的信源结构建议以客户端实测平台为准。</div>';
+    return;
+  }
+  var total = tops.reduce(function(s,x){return s+x[1]},0);
+  var html = '<table><tr><th style="width:50px">排名</th><th>域名</th><th style="width:90px">引用次数</th><th style="width:90px">占比</th><th>核验</th></tr>';
+  tops.forEach(function(x,i){
+    var share = total?Math.round(x[1]/total*1000)/10:0;
+    html += '<tr><td><span class="rank-no '+(i<3?'top':'')+'">'+(i+1)+'</span></td><td><b>'+x[0]+'</b></td><td>'+x[1]+'</td><td>'+share+'%</td>'
+      + '<td><a class="dom-link" href="https://'+x[0]+'" target="_blank" rel="noopener">打开网站 ↗</a></td></tr>';
+  });
+  $('srcTable').innerHTML = html+'</table>';
+}
+renderSrcBtns(); renderSrc();
+$('srcGuide').innerHTML = ''
+  + '<p>① <b>先看排名，再看性质</b>：被引用次数最多的域名，就是 AI 在口腔赛道最信任的信源。权威媒体（新闻门户、健康垂类）上榜 = 适合投放科普/品牌稿；UGC 社区上榜 = 适合铺设真实体验内容。</p>'
+  + '<p>② <b>点进去看 AI 在抄哪一段</b>：打开上榜网站，对照"分平台诊断"里 AI 原文引用的措辞——AI 抄的是价格表、门店清单还是医生资历，我们就把同类信息做成结构化内容投到同一个信源。</p>'
+  + '<p>③ <b>投稿路径</b>：新闻门户走商业供稿渠道；健康垂类（如 39健康、博禾）走医生科普合作；本地生活内容回归美团/大众点评站内，形成站内外交叉验证。</p>'
+  + '<p>④ <b>纪律</b>：同一事实（门店数、医保、地址）在所有信源保持一致——多信源交叉一致是 AI 敢推荐佳德的前提。</p>';
+
+/* ---------- 信任验证 ---------- */
+var curTrust = PLATS[0];
+function renderTrustBtns(){
+  $('trustBtns').innerHTML = PLATS.map(function(p){
+    return '<button class="'+(p===curTrust?'on':'')+'" data-p="'+p+'">'+p+'</button>';
+  }).join('');
+}
+function renderTrust(){
+  var s = (S.platforms[curTrust]||{}).B||{};
+  var facts = s['事实点']||{};
+  var qids = Object.keys(facts).sort();
+  if(!qids.length){ $('trustBox').innerHTML = '<div class="note">'+curTrust+' 暂无 B池事实校验数据。</div>'; return; }
+  var html='';
+  qids.forEach(function(qid){
+    var q = Q[qid]||{};
+    var rows = facts[qid].map(function(f){
+      var ok = f.hit_runs>0;
+      return '<tr><td>'+f.fact+'</td><td>'+(ok?'<span class="pill pill-g">命中 '+f.hit_runs+'/'+f.total_runs+' 次</span>':'<span class="pill pill-r">未命中</span>')+'</td></tr>';
+    }).join('');
+    html += '<div class="q"><div class="q-h" data-trustq="'+qid+'"><span class="qid">'+qid+'</span><span class="qt">'+esc(q.query||'')+'</span></div>'
+      + '<div class="q-b"><table><tr><th>应答事实点</th><th style="width:150px">AI 命中情况</th></tr>'+rows+'</table>'
+      + '<div style="margin-top:8px;font-size:12.5px;color:#6B5A2E">完整 AI 原文见「分平台诊断」→ '+qid+'</div></div></div>';
+  });
+  // 补充：无规则的B池题
+  var blob = P[curTrust]||{};
+  var noRule = [];
+  for(var i=52;i<=72;i++){var qid='JD-'+i;if(qid<'JD-52')continue;if(blob[qid]&&!facts[qid])noRule.push(qid);}
+  if(noRule.length){
+    html += '<div class="note" style="margin-top:12px">以下题目（'+noRule.join('、')+'）为价格/电话/营业时间类，AI 回答仅作留档参考、不判正误——以佳德官方口径为准。</div>';
+  }
+  $('trustBox').innerHTML = html;
+}
+renderTrustBtns(); renderTrust();
+
+/* ---------- 数据校验 ---------- */
+(function(){
+  var total=0, withUrl=0, partial=0;
+  PLATS.forEach(function(p){
+    Object.values(P[p]).forEach(function(rec){
+      (rec.runs||[]).forEach(function(r){
+        total++; if(r.chat_url) withUrl++; if(r.partial) partial++;
+      });
+    });
+  });
+  $('verifyBox').innerHTML = ''
+    + '<p>① 本看板共收录 <b>'+total+'</b> 条 AI 原文回答，其中 <b>'+withUrl+'</b> 条带会话回放地址（在"分平台诊断"点"会话回放 ↗"即可打开原始对话页面核对）。</p>'
+    + '<p>② 每道题采样 3 次取"是否提及佳德"，避免 AI 千人千面的单次偶然；标 <span class="pill pill-b">部分取样</span> 的 '+partial+' 条为平台限流期间的保底记录，已在统计中如实保留。</p>'
+    + '<p>③ Kimi 原文已做"思考块"清洗——只保留 AI 展示给用户的正式回答部分，避免把推理过程误计为品牌曝光。</p>'
+    + '<p>④ 欢迎现场抽题复测：任一平台、任一题，用您自己的手机问一遍，与看板原文对照。</p>';
+})();
+
+/* ---------- 交互 ---------- */
+document.getElementById('navUl').addEventListener('click',function(e){
+  var li = e.target.closest('li'); if(!li) return;
+  document.querySelectorAll('nav li').forEach(function(x){x.classList.remove('on')});
+  li.classList.add('on');
+  document.querySelectorAll('section').forEach(function(s){s.classList.remove('on')});
+  document.getElementById(li.dataset.s).classList.add('on');
+});
+document.body.addEventListener('click',function(e){
+  var qh = e.target.closest('.q-h'); if(qh){ qh.parentElement.classList.toggle('open'); return; }
+  var b = e.target.closest('.plat-btns button'); if(!b) return;
+  var p = b.dataset.p;
+  if(b.parentElement.id==='platBtns'){ curPlat=p; renderPlatBtns(); renderQList(); }
+  if(b.parentElement.id==='srcBtns'){ curSrc=p; renderSrcBtns(); renderSrc(); }
+  if(b.parentElement.id==='trustBtns'){ curTrust=p; renderTrustBtns(); renderTrust(); }
+});
+document.getElementById('poolSel').addEventListener('change',function(){poolF=this.value;renderQList()});
+document.getElementById('visSel').addEventListener('change',function(){visF=this.value;renderQList()});
+document.getElementById('qSearch').addEventListener('input',function(){qF=this.value.trim();renderQList()});
+})();
+</script>
+</body>
+</html>
